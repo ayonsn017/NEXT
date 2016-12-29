@@ -4,7 +4,7 @@ import next.apps.SimpleTargetManager
 
 class MyApp:
     def __init__(self,db):
-        self.app_id = 'PoolBasedTripletMDS'
+        self.app_id = 'MoleculesPoolBasedTripletMDS'
         self.TargetManager = next.apps.SimpleTargetManager.SimpleTargetManager(db)
 
     def initExp(self, butler, init_algs, args):

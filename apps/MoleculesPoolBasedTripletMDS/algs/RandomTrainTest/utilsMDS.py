@@ -93,8 +93,8 @@ def getRandomQuery(X):
     n,d = X.shape
     
     i = 1
-    j = 1
-    k = 1
+    j = 2
+    k = 3
     q = [i, j, k]
     
     score = getTripletScore(X,q)
