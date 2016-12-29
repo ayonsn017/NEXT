@@ -1,6 +1,6 @@
 import time
 import numpy.random
-from apps.PoolBasedTripletMDS.algs.RandomTrainTest import utilsMDS
+from apps.MoleculesPoolBasedTripletMDS.algs.RandomTrainTest import utilsMDS
 import next.utils as utils
 
 class RandomTrainTest:

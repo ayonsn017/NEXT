@@ -7,7 +7,7 @@ from launch_experiment import *
 target_file = 'molecule_images.json'
 
 experiment_list = []
-alg_ids = ['RandomSampling','RandomSampling','UncertaintySampling','CrowdKernel','STE']
+alg_ids = ['RandomTrainTest','RandomTrainTest']
 
 # Create common alg_list
 alg_list = []
