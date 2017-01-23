@@ -25,7 +25,6 @@ ceil = math.ceil
 import time
 
 
-
 def main():
     """
     Example of Usage
@@ -75,31 +74,23 @@ def main():
     
 
 
-def getRandomQuery(X):
+def getRandomQuery(n):
     """
-    Outputs a triplet [i,j,k] chosen uniformly at random from all possible triplets 
-    and score = abs( ||x_i - x_k||^2 - ||x_j - x_k||^2 )
+    Outputs a triplet [i,j,k] where i,j is generated using the joint distribution. k is a random index 
     
-    Inputs:
-        (numpy.ndarray) X : matrix from which n is extracted from and score is derived
-        
+    :param n: the number of instances to choose from
+    :return: [(int), (int), (int)], the first two indices refer to the instance index shown to the participant, it is safe to ignore the third index    
     Outputs:
         [(int) i, (int) j, (int) k] q : where k in [n], i in [n]-k, j in [n]-k-j
-        (float) score : signed distance to current solution (positive if it agrees, negative otherwise)
-        
-    Usage:
-        q,score = getRandomQuery(X)
     """
-    n,d = X.shape
     
-    i = 1
-    j = 2
-    k = 3
+    
+    i = 0
+    j = randint(n)
+    k = 0  # No need to worry about this index
     q = [i, j, k]
     
-    score = getTripletScore(X,q)
-
-    return q,score
+    return q
 
 def getTripletScore(X,q):
     """

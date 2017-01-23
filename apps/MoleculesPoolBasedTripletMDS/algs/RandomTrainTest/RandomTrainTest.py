@@ -16,10 +16,9 @@ class RandomTrainTest:
 
   def getQuery(self,butler):
     X = numpy.array(butler.algorithms.get(key='X'))
-    q,score = utilsMDS.getRandomQuery(X)
-    index_center = q[2]
-    index_left = q[0]
-    index_right = q[1]
+    n,d = X.shape
+    # can safely ignore index_center
+    index_left, index_right, index_center = utilsMDS.getRandomQuery(n)
     return [index_center,index_left,index_right]
 
 
