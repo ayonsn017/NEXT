@@ -21,8 +21,14 @@ initExp:
         d:
           description: Desired dimension of resulting embedding.
           type: num
-        failure_probability:
-          description: Confidence value of result. 
+        pretest_count:
+          description: Number of pretest questions (int) to show to the participant.
+          type: num
+        training_count:
+          description: Number of training questionsc (int) to show to the participant.
+          type: num
+        posttest_count:
+          description: Number of posttest questions (int) to show to the participant.
           type: num
 
 processAnswer:

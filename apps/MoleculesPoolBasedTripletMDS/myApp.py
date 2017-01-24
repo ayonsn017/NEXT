@@ -9,11 +9,6 @@ class MyApp:
 
     def initExp(self, butler, init_algs, args):
         exp_uid = butler.exp_uid
-        # write to log file
-        log_fname = './log.txt'
-        log_file = open(log_fname, 'a+')
-        log_file.write(str(args['targets']) + '\n')
-        log_file.close()
 
         if 'targetset' in args['targets'].keys():
             n  = len(args['targets']['targetset'])
@@ -24,11 +19,19 @@ class MyApp:
         del args['targets']
 
         alg_data = {}
-        algorithm_keys = ['n','d','failure_probability']
+        algorithm_keys = ['n', 'd', 'pretest_count', 'training_count', 'posttest_count']
         for key in algorithm_keys:
             if key in args:
                 alg_data[key]=args[key]
 
+        # calculate the number of questions to show
+        num_tries = args['pretest_count']
+        num_tries += args['training_count']
+        num_tries += args['posttest_count']
+
+        args['num_tries'] = num_tries
+
+        # calls initExp from algs
         init_algs(alg_data)
         return args
 
@@ -38,8 +41,6 @@ class MyApp:
         alg_response = alg()
         exp_uid = butler.exp_uid
         center  = self.TargetManager.get_target_item(exp_uid, 0)
-        #left  = self.TargetManager.get_target_item(exp_uid, alg_response[0])
-        #right  = self.TargetManager.get_target_item(exp_uid, alg_response[1])
         left  = self.TargetManager.get_target_item_alt_desc(exp_uid, temp_list[alg_response[0]])
         right  = self.TargetManager.get_target_item_alt_desc(exp_uid, temp_list[alg_response[1]])
         center['label'] = 'center'
@@ -81,12 +82,6 @@ class MyApp:
         alg({'left_id':0, 'right_id':1, 'center_id':2, 'target_winner':target_winner})
         
         q= [0, 1, 2]
-
-        # write to log file
-        log_fname = './log.txt'
-        log_file = open(log_fname, 'a+')
-        log_file.write('Participant answer ' + str(target_winner) + '\n')
-        log_file.close()
 
         return {'target_winner':target_winner, 'q':q}
 

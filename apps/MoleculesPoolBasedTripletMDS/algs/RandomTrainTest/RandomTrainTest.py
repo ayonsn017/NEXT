@@ -4,11 +4,13 @@ from apps.MoleculesPoolBasedTripletMDS.algs.RandomTrainTest import utilsMDS
 import next.utils as utils
 
 class RandomTrainTest:
-  def initExp(self,butler, n, d, failure_probability):
+  def initExp(self,butler, n, d, pretest_count, training_count, posttest_count):
     X = numpy.random.randn(n,d)
     butler.algorithms.set(key='n',value= n)
     butler.algorithms.set(key='d',value= d)
-    butler.algorithms.set(key='delta',value= failure_probability)
+    butler.algorithms.set(key='pretest_count', value=pretest_count)
+    butler.algorithms.set(key='training_count', value=training_count)
+    butler.algorithms.set(key='posttest_count', value=posttest_count)
     butler.algorithms.set(key='X',value= X.tolist())
     butler.algorithms.set(key='num_reported_answers', value=0)  # how many questions the participant has answered
     return True

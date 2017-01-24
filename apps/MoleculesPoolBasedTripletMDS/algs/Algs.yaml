@@ -6,8 +6,14 @@ initExp:
     d:
       description: Dimension of embedding
       type: num
-    failure_probability:
-      description: Confidence of result
+    pretest_count:
+      description: Number of pretest questions to show to the participant.
+      type: num
+    training_count:
+      description: Number of training questions to show to the participant.
+      type: num
+    posttest_count:
+      description: Number of posttest questions to show to the participant.
       type: num
   rets:
     type: bool
