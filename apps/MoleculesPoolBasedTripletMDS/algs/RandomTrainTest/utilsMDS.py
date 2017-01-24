@@ -79,18 +79,13 @@ def getRandomQuery(n):
     Outputs a triplet [i,j,k] where i,j is generated using the joint distribution. k is a random index 
     
     :param n: the number of instances to choose from
-    :return: [(int), (int), (int)], the first two indices refer to the instance index shown to the participant, it is safe to ignore the third index    
-    Outputs:
-        [(int) i, (int) j, (int) k] q : where k in [n], i in [n]-k, j in [n]-k-j
+    :return: [(int), (int)], these refer to the two indices of molecules to be shown 
+                to the participant, it is safe to ignore the third index    
     """
+    mol_index1 = 2
+    mol_index2 = randint(n)
     
-    
-    i = 0
-    j = randint(n)
-    k = 0  # No need to worry about this index
-    q = [i, j, k]
-    
-    return q
+    return [mol_index1, mol_index2]
 
 def getTripletScore(X,q):
     """

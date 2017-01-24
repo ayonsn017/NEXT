@@ -13,14 +13,9 @@ class RandomTrainTest:
     butler.algorithms.set(key='num_reported_answers', value=0)
     return True
 
-
   def getQuery(self,butler):
-    X = numpy.array(butler.algorithms.get(key='X'))
-    n,d = X.shape
-    # can safely ignore index_center
-    index_left, index_right, index_center = utilsMDS.getRandomQuery(n)
-    return [index_center,index_left,index_right]
-
+    n = numpy.array(butler.algorithms.get(key='n'))
+    return utilsMDS.getRandomQuery(n)
 
   def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
     if left_id==target_winner:
