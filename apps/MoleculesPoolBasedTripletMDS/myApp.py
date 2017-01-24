@@ -38,14 +38,14 @@ class MyApp:
     def getQuery(self, butler, alg, args):
         alg_response = alg()
         exp_uid = butler.exp_uid
-        center  = self.TargetManager.get_target_item(exp_uid, 0)
-        left  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[0])
-        right  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[1])
-        center['label'] = 'center'
-        left['label'] = 'left'
-        right['label'] = 'right'
+        mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[0])
+        mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[1])
+        same = alg_response[2]
+        ques_type = alg_response[3]
+        mol1['label'] = 'mol1'
+        mol2['label'] = 'mol2'
 
-        return {'target_indices':[center, left, right]}
+        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type}
 
     def processAnswer(self, butler, alg, args):
         

@@ -32,6 +32,13 @@ getQuery:
       1:
         type: string
         description: The key for the second molecule in representation
+      2:
+        type: num
+        description: 1 or 0, identifies if the two molecules are the same or not 
+      3:
+        type: string
+        description: pretest, training or posttest identifying which type of question it is
+        
       
 processAnswer:
     args:

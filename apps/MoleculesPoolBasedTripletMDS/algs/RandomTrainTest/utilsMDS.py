@@ -78,26 +78,42 @@ def getRandomQuery():
     """
     Outputs a list [rep_mol1, rep_mol2] where rep_mol1 and rep_mol2 is generated using the joint test distribution.
     
-    :return: [(str), (str)], these refer to the keys of two molecules to be shown to the participant    
+    :return: [str, str, int], the first two strings are keys of the two molecules to be shown to the participant, the last int 
+                 is either 1 or 0 identifying if the two molecules are same or not
     """
     temp_list = ['BS_BCl3', 'BS_BeCl2', 'BS_BF3']
 
     size = len(temp_list)
 
-
     mol_index1 = 0
     mol_index2 = randint(size)
-    
-    return [temp_list[mol_index1], temp_list[mol_index2]]
+
+    # check if the two molecules are the same or not
+    same = 0
+    if mol_index1 == mol_index2:
+        same = 1
+
+    return [temp_list[mol_index1], temp_list[mol_index2], same]
 
 def get_random_training_query():
+    """
+    Outputs a list [rep_mol1, rep_mol2] where rep_mol1 and rep_mol2 is generated using the joint training distribution.
+    
+    :return: [str, str, int], the first two strings are keys of the two molecules to be shown to the participant, the last int 
+                 is either 1 or 0 identifying if the two molecules are same or not
+    """
     temp_list = ['BS_BrF5', 'BS_Br2']
     size = len(temp_list)
 
     mol_index1 = 0
     mol_index2 = randint(size)
 
-    return [temp_list[mol_index1], temp_list[mol_index2]]    
+    # check if the two molecules are the same or not
+    same = 0
+    if mol_index1 == mol_index2:
+        same = 1    
+
+    return [temp_list[mol_index1], temp_list[mol_index2], same]    
 
 def getTripletScore(X,q):
     """

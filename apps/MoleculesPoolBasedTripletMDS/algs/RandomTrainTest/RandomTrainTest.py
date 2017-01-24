@@ -8,6 +8,9 @@ class RandomTrainTest:
   training_count_key = 'training_count'
   posttest_count_key = 'posttest_count'
   num_reported_answers_key = 'num_reported_answers'
+  pretest_key = 'pretest'
+  training_key = 'training'
+  posttest_key = 'posttest'
   def initExp(self,butler, n, d, pretest_count, training_count, posttest_count):
     X = numpy.random.randn(n,d)
     butler.algorithms.set(key='n',value= n)
@@ -28,11 +31,14 @@ class RandomTrainTest:
     posttest_count = butler.algorithms.get(key=self.posttest_count_key)
 
     if num_reported_answers < pretest_count:
-      return utilsMDS.getRandomQuery()
+      mol1, mol2, same = utilsMDS.getRandomQuery()
+      return [mol1, mol2, same, self.pretest_key]
     elif num_reported_answers >= pretest_count and num_reported_answers < pretest_count + training_count:
-      return utilsMDS.get_random_training_query()
+      mol1, mol2, same =  utilsMDS.get_random_training_query()
+      return [mol1, mol2, same, self.training_key]
     elif num_reported_answers >= pretest_count + training_count:
-      return utilsMDS. getRandomQuery()
+      mol1, mol2, same = utilsMDS. getRandomQuery()
+      return [mol1, mol2, same, self.posttest_key]
 
   def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
     '''
