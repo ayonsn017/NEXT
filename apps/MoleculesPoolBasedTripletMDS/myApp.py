@@ -36,22 +36,14 @@ class MyApp:
         return args
 
     def getQuery(self, butler, alg, args):
-        temp_list = ['BS_BCl3', 'BS_BeCl2', 'BS_BF3', 'BS_BrF5', 'BS_Br2']
-
         alg_response = alg()
         exp_uid = butler.exp_uid
         center  = self.TargetManager.get_target_item(exp_uid, 0)
-        left  = self.TargetManager.get_target_item_alt_desc(exp_uid, temp_list[alg_response[0]])
-        right  = self.TargetManager.get_target_item_alt_desc(exp_uid, temp_list[alg_response[1]])
+        left  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[0])
+        right  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[1])
         center['label'] = 'center'
         left['label'] = 'left'
         right['label'] = 'right'
-
-        # write to log file
-        log_fname = './log.txt'
-        log_file = open(log_fname, 'a+')
-        log_file.write(str(alg_response[1]) + ' ' + str(right) + '\n')
-        log_file.close()
 
         return {'target_indices':[center, left, right]}
 

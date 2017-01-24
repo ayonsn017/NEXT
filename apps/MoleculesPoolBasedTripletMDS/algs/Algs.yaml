@@ -23,18 +23,15 @@ initExp:
 
 getQuery:
   rets:
-    description: The triplet to ask about
+    description: The molecule question to ask about
     type: tuple
     values:
       0:
-        type: num
-        description: The ID of the center target
+        type: string
+        description: The key for the first molecule in representation
       1:
-        type: num
-        description: The ID of the left target
-      2:
-        type: num
-        description: The ID of the right target
+        type: string
+        description: The key for the second molecule in representation
       
 processAnswer:
     args:

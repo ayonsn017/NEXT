@@ -4,6 +4,10 @@ from apps.MoleculesPoolBasedTripletMDS.algs.RandomTrainTest import utilsMDS
 import next.utils as utils
 
 class RandomTrainTest:
+  pretest_count_key = 'pretest_count'
+  training_count_key = 'training_count'
+  posttest_count_key = 'posttest_count'
+  num_reported_answers_key = 'num_reported_answers'
   def initExp(self,butler, n, d, pretest_count, training_count, posttest_count):
     X = numpy.random.randn(n,d)
     butler.algorithms.set(key='n',value= n)
@@ -18,8 +22,17 @@ class RandomTrainTest:
 
   def getQuery(self,butler):
     n = numpy.array(butler.algorithms.get(key='n'))
-    return utilsMDS.getRandomQuery(n)
+    num_reported_answers = butler.algorithms.get(key='num_reported_answers')
+    pretest_count = butler.algorithms.get(key=self.pretest_count_key)
+    training_count = butler.algorithms.get(key=self.training_count_key)
+    posttest_count = butler.algorithms.get(key=self.posttest_count_key)
 
+    if num_reported_answers < pretest_count:
+      return utilsMDS.getRandomQuery()
+    elif num_reported_answers >= pretest_count and num_reported_answers < pretest_count + training_count:
+      return utilsMDS.get_random_training_query()
+    elif num_reported_answers >= pretest_count + training_count:
+      return utilsMDS. getRandomQuery()
 
   def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
     '''
@@ -29,7 +42,10 @@ class RandomTrainTest:
       q = [right_id,left_id,center_id]
     butler.algorithms.append(key='S',value=q)
     n = butler.algorithms.get(key='n')
+    '''
+    # increment the number of questions this participant has seen
     num_reported_answers = butler.algorithms.increment(key='num_reported_answers')
+    '''
     if num_reported_answers % int(n) == 0:
       butler.job('full_embedding_update', {}, time_limit=30)
     else:

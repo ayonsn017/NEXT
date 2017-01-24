@@ -74,18 +74,30 @@ def main():
     
 
 
-def getRandomQuery(n):
+def getRandomQuery():
     """
-    Outputs a triplet [i,j,k] where i,j is generated using the joint distribution. k is a random index 
+    Outputs a list [rep_mol1, rep_mol2] where rep_mol1 and rep_mol2 is generated using the joint test distribution.
     
-    :param n: the number of instances to choose from
-    :return: [(int), (int)], these refer to the two indices of molecules to be shown 
-                to the participant, it is safe to ignore the third index    
+    :return: [(str), (str)], these refer to the keys of two molecules to be shown to the participant    
     """
-    mol_index1 = 2
-    mol_index2 = randint(n)
+    temp_list = ['BS_BCl3', 'BS_BeCl2', 'BS_BF3']
+
+    size = len(temp_list)
+
+
+    mol_index1 = 0
+    mol_index2 = randint(size)
     
-    return [mol_index1, mol_index2]
+    return [temp_list[mol_index1], temp_list[mol_index2]]
+
+def get_random_training_query():
+    temp_list = ['BS_BrF5', 'BS_Br2']
+    size = len(temp_list)
+
+    mol_index1 = 0
+    mol_index2 = randint(size)
+
+    return [temp_list[mol_index1], temp_list[mol_index2]]    
 
 def getTripletScore(X,q):
     """
