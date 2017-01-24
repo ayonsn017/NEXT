@@ -31,7 +31,7 @@ processAnswer:
       type: dict
       values:
         target_winner:
-          description: The id of the target that won the given query. This should be an id from the list of ids obtained in the associated getQuery request.
+          description: Participant's answer. Must be between 0 and 1.
           type: num
           
 

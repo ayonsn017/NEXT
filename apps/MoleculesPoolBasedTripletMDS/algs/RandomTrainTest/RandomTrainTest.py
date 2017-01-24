@@ -10,14 +10,17 @@ class RandomTrainTest:
     butler.algorithms.set(key='d',value= d)
     butler.algorithms.set(key='delta',value= failure_probability)
     butler.algorithms.set(key='X',value= X.tolist())
-    butler.algorithms.set(key='num_reported_answers', value=0)
+    butler.algorithms.set(key='num_reported_answers', value=0)  # how many questions the participant has answered
     return True
+
 
   def getQuery(self,butler):
     n = numpy.array(butler.algorithms.get(key='n'))
     return utilsMDS.getRandomQuery(n)
 
+
   def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
+    '''
     if left_id==target_winner:
       q = [left_id,right_id,center_id]
     else:
@@ -29,6 +32,8 @@ class RandomTrainTest:
       butler.job('full_embedding_update', {}, time_limit=30)
     else:
       butler.job('incremental_embedding_update', {},time_limit=5)
+    '''
+    # must return this true value to record stats like time
     return True
 
 
