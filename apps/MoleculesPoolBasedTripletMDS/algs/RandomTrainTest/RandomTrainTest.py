@@ -11,6 +11,7 @@ class RandomTrainTest:
   pretest_key = 'pretest'
   training_key = 'training'
   posttest_key = 'posttest'
+  participant_answers_count_dict_key = 'participant_answers_count_dict'
   def initExp(self,butler, n, d, pretest_count, training_count, posttest_count):
     X = numpy.random.randn(n,d)
     butler.algorithms.set(key='n',value= n)
@@ -19,26 +20,40 @@ class RandomTrainTest:
     butler.algorithms.set(key='training_count', value=training_count)
     butler.algorithms.set(key='posttest_count', value=posttest_count)
     butler.algorithms.set(key='X',value= X.tolist())
-    butler.algorithms.set(key='num_reported_answers', value=0)  # how many questions the participant has answered
+    butler.algorithms.set(key='num_reported_answers', value=0)  # the number of total questions answered for this algorithm
+    butler.algorithms.set(key=self.participant_answers_count_dict_key, value={}) # dictionary to store the number of questions the participant has answered
     return True
 
 
-  def getQuery(self,butler):
+  def getQuery(self, butler, participant_uid):
     n = numpy.array(butler.algorithms.get(key='n'))
     num_reported_answers = butler.algorithms.get(key='num_reported_answers')
+
+    participant_answers_count_dict = butler.algorithms.get(key=self.participant_answers_count_dict_key)
+
+    if participant_uid not in participant_answers_count_dict:
+      participant_answers_count_dict[participant_uid] = 0
+      num_reported_answers = 0
+    else:
+      num_reported_answers = participant_answers_count_dict[participant_uid]
+
     pretest_count = butler.algorithms.get(key=self.pretest_count_key)
     training_count = butler.algorithms.get(key=self.training_count_key)
     posttest_count = butler.algorithms.get(key=self.posttest_count_key)
 
     if num_reported_answers < pretest_count:
       mol1, mol2, same = utilsMDS.getRandomQuery()
-      return [mol1, mol2, same, self.pretest_key]
+      ques_type = self.pretest_key
     elif num_reported_answers >= pretest_count and num_reported_answers < pretest_count + training_count:
       mol1, mol2, same =  utilsMDS.get_random_training_query()
-      return [mol1, mol2, same, self.training_key]
+      ques_type = self.training_key
     elif num_reported_answers >= pretest_count + training_count:
       mol1, mol2, same = utilsMDS. getRandomQuery()
-      return [mol1, mol2, same, self.posttest_key]
+      ques_type = self.posttest_key
+
+    participant_answers_count_dict[participant_uid] = num_reported_answers + 1    
+    butler.algorithms.set(key=self.participant_answers_count_dict_key, value=participant_answers_count_dict)  
+    return [mol1, mol2, same, ques_type]
 
   def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
     '''

@@ -22,6 +22,10 @@ initExp:
 
 
 getQuery:
+  args:
+    participant_uid:
+      description: The id of the participant for whom the question is generated
+      type: string
   rets:
     description: The molecule question to ask about
     type: tuple

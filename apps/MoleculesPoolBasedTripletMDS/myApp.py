@@ -36,8 +36,9 @@ class MyApp:
         return args
 
     def getQuery(self, butler, alg, args):
-        alg_response = alg()
         exp_uid = butler.exp_uid
+        participant_uid = args['participant_uid']
+        alg_response = alg({'participant_uid':participant_uid})
         mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[0])
         mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[1])
         same = alg_response[2]
