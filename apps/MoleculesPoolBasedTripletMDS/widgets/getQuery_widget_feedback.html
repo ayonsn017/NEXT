@@ -33,6 +33,8 @@
 </style>
 <div>
     Are the following two molecules the same?
+    <p id="question_type">The type of question is {{ query.ques_type}}</p>
+    <p id="same">The two molecules are {{ query.same }}</p>
 </div>
 
 <div class="row">
@@ -76,8 +78,8 @@
     {% else %}
     <!-- no feedback -->
     &nbsp;
-    <button type="button" onclick="next_widget.processAnswer(INPUT TO PROCESS ANSWER);">Yes</button>
-    <button type="button" onclick="next_widget.processAnswerd(INPUT TO PROCESS ANSWER);">No</button>
+    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 1 }}});">Yes</button>
+    <button type="button" onclick="next_widget.processAnswerd({'target_winner': {{ 0 }}});">No</button>
     {% endif %}
 </div>
 
@@ -106,7 +108,8 @@ var reply_click = function(btnLabel) {
   }
   add_button();   // make proceed button display
   // click on Proceed to advance - input to process answer will be determined from x
-  document.getElementById("Proceed").onclick = next_widget.processAnswer(INPUT TO PROCESS ANSWER);
+  document.getElementById("Proceed").onclick = next_widget.processAnswer({'target_winner': {{ btnLabel == "Yes" }}, 
+                                                                          'participant_uid': {{query.participant_uid}}});
 }
 
 function display_text(text) {
