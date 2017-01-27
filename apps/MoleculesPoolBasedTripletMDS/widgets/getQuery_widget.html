@@ -78,8 +78,8 @@
     {% else %}
     <!-- no feedback -->
     &nbsp;
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 1 }}, 'participant_uid': {{ query.participant_uid }}});">Yes</button>
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 0 }}, 'participant_uid': {{ query.participant_uid }}});">No</button>
+    <button type="button" onclick="next_widget.processAnswer({'target_winner': 1, 'participant_uid': '{{ query.participant_uid }}'});">Yes</button>
+    <button type="button" onclick="next_widget.processAnswer({'target_winner': 0, 'participant_uid': '{{ query.participant_uid }}'});">No</button>
     {% endif %}
 </div>
 
@@ -95,21 +95,21 @@ function add_button() {
 }
 
 var reply_click = function(btnLabel) {
+  console.log('print');
   // remove buttons
-  document.getElementByID("Yes").remove();
-  document.getElementByID("No").remove();
+  // document.getElementByID("Yes").remove();
+  // document.getElementByID("No").remove();
 
-  // Provide feedback
-  if (btnLabel=="Yes" && query.same || btnLabel=="No" && !query.same) {
-    display_text("Correct");
-  }
-  else {
-    display_text("Incorrect");
-  }
-  add_button();   // make proceed button display
-  // click on Proceed to advance - input to process answer will be determined from x
-  document.getElementById("Proceed").onclick = next_widget.processAnswer({'target_winner': {{ btnLabel == "Yes" }}, 
-                                                                          'participant_uid': {{ query.participant_uid }}});
+  // // Provide feedback
+  // if (btnLabel=="Yes" && query.same || btnLabel=="No" && !query.same) {
+  //   display_text("Correct");
+  // }
+  // else {
+  //   display_text("Incorrect");
+  // }
+  // add_button();   // make proceed button display
+  // // click on Proceed to advance - input to process answer will be determined from x
+  // document.getElementById("Proceed").onclick = next_widget.processAnswer({'target_winner': btnLabel === "Yes", 'participant_uid': "{{ query.participant_uid }}"});
 }
 
 function display_text(text) {
@@ -118,7 +118,6 @@ function display_text(text) {
   h.appendChild(t);                                   // Append the text to <h1>
 }
 
-}
 </script>
 </div>
 
