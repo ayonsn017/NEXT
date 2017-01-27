@@ -4,7 +4,14 @@ import os, sys
 sys.path.append("../")
 from launch_experiment import *
 
-target_file = 'molecule_images.json'
+target_file = 'data/01_X/mol_img_dict.json'
+pretest_dist_fname = 'data/02_TestDistribution/test_dist_LewisSF.csv'
+training_dist_fname = 'data/03_TrainingPool/training_dist_LewisSF.csv'
+posttest_dist_fname = 'data/02_TestDistribution/test_dist_LewisSF.csv'
+
+pretest_file_key = 'pretest_file'
+training_file_key = 'training_file'
+posttest_file_key = 'posttest_file'
 
 experiment_list = []
 alg_ids = ['RandomTrainTest','RandomTrainTest']
@@ -12,15 +19,19 @@ alg_ids = ['RandomTrainTest','RandomTrainTest']
 # Create common alg_list
 alg_list = []
 for idx,alg_id in enumerate(alg_ids):
-  alg_item = {}
-  alg_item['alg_id'] = alg_id
-  if idx==0:
-    alg_item['alg_label'] = 'Test'
-  else:
-    alg_item['alg_label'] = alg_id    
-  alg_item['test_alg_label'] = 'Test'
-  #alg_item['params'] = {}
-  alg_list.append(alg_item)
+    alg_item = {}
+    alg_item['alg_id'] = alg_id
+    if idx==0:
+        alg_item['alg_label'] = 'Test'
+    else:
+        alg_item['alg_label'] = alg_id    
+    alg_item['test_alg_label'] = 'Test'
+    alg_item[pretest_file_key] = pretest_dist_fname
+    alg_item[training_file_key] = training_dist_fname
+    alg_item[posttest_file_key] = posttest_dist_fname
+
+    #alg_item['params'] = {}
+    alg_list.append(alg_item)
 
 # Create common algorithm management settings  
 params = []

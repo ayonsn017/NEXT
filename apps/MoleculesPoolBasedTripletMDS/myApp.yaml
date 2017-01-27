@@ -15,6 +15,15 @@ initExp:
               test_alg_label:
                 description: alg_label of the algorithm whose collected triplets to use as a test set when validating this algorithm. A resulting plot of test-error on triplets is available on the dashboard.
                 type: str
+              pretest_file:
+                description: a pretest file name which may contain a list of instances or a distribution depending on the algorithm to launch
+                type: str
+              training_file:
+                description: a training file name which may contain a list of instances or a distribution depending on the algorithm to launch
+                type: str
+              posttest_file:
+                description: a posttest file name which may contain a list of instances or a distribution depending on the algorithm to launch
+                type: str 
         instructions:
           default: Please select, using your mouse or left and right arrow keys, the item on the bottom that is closest to the top.
           optional: true

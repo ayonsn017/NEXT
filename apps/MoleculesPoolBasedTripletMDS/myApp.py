@@ -3,12 +3,20 @@ import next.utils as utils
 import next.apps.AltDescTargetManager
 
 class MyApp:
+    alg_list_key = 'alg_list'
+    alg_label_key = 'alg_label'
+    pretest_file_key = 'pretest_file'
+    training_file_key = 'training_file'
+    posttest_file_key = 'posttest_file'
+    test_int = 0
+
     def __init__(self,db):
         self.app_id = 'MoleculesPoolBasedTripletMDS'
         self.TargetManager = next.apps.AltDescTargetManager.AltDescTargetManager(db)
 
     def initExp(self, butler, init_algs, args):
         exp_uid = butler.exp_uid
+        alg_label = butler.alg_label
 
         if 'targetset' in args['targets'].keys():
             n  = len(args['targets']['targetset'])
@@ -30,6 +38,34 @@ class MyApp:
         num_tries += args['posttest_count']
 
         args['num_tries'] = num_tries
+
+        # get pretest, training and posttest file names
+        alg_list = args[self.alg_list_key]
+
+        # log data
+        log_fname = 'log.txt'
+        log_file = open(log_fname, 'a')
+        if alg_label is None:
+            log_file.write('Original Label: none' + '\n')
+        else:
+            log_file.write('Original Label: ' + alg_label  + '\n')
+
+        log_file.write(str(butler) + '\n')
+
+
+        for alg_item in alg_list:
+            #log_file.write(str(alg_item) + '\n')
+            if alg_item[self.alg_label_key] == alg_label:
+                alg_data[pretest_file_key] = alg_item[self.pretest_file_key]
+                alg_data[training_file_key] = alg_item[self.training_file_key]
+                alg_data[posttest_file_key] = alg_item[self.posttest_file_key]
+                break
+        log_file.close()
+        
+        alg_data['pretest_file'] =str(self.test_int)
+        self.test_int += 1
+        alg_data['training_file'] = 'sdfasf'
+        alg_data['posttest_file'] = 'asfdasdf'
 
         # calls initExp from algs
         init_algs(alg_data)
