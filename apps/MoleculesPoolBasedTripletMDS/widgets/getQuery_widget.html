@@ -32,14 +32,15 @@
   }
 </style>
 <div>
-    Are the following two molecules the same? 
+    Are the following two molecules the same?
     <p id="question_type">The type of question is {{ query.ques_type}}</p>
     <p id="same">The two molecules are {{ query.same }}</p>
 </div>
+
 <div class="row">
-  <!-- molecule 1 -->
-  <div class="col-xs-6" id="mol1">
-    {% if query.target_indices[0].primary_type == "image" or query.target_indices[1].primary_type == "img"%}
+  <!-- Left Target -->
+  <div class="col-xs-6" id="left">
+    {% if query.target_indices[0].primary_type == "image" or query.target_indices[0].primary_type == "img"%}
     <img class="center-block" src={{ query.target_indices[0].primary_description }}></img>
 
     {% elif query.target_indices[0].primary_type == "text"%}
@@ -53,13 +54,13 @@
     {% endif %}
   </div>
 
-  <!-- molecule2 -->
-  <div class="col-xs-6" id="mol2">
-    {% if query.target_indices[0].primary_type == "image" or query.target_indices[1].primary_type == "img" %}
+  <!-- Right Target -->
+  <div class="col-xs-6" id="right">
+    {% if query.target_indices[1].primary_type == "image" or query.target_indices[1].primary_type == "img" %}
     <img class="center-block" src={{ query.target_indices[1].primary_description }}> </img>
     {% elif query.target_indices[1].primary_type == "text" %}
     <div>{{ query.target_indices[1].primary_description }}</div>
-    {% elif query.target_indices[1].primary_type == "video" %}
+    {% elif query.target_indices[0].primary_type == "video" %}
     <video width="320" height="240" poster="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif" controls autoplay loop>
       <source src={{ query.target_indices[1].primary_description }} type="video/mp4">
 	Your browser does not support the video tag.
@@ -68,13 +69,56 @@
   </div>
 </div>
 </div>
+    {% if query.ques_type == "training" %}
+    <!-- provide feedback -->
     &nbsp;
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 1 }}});">Yes</button>
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 0 }}});">No</button>
+    <button id="Yes" type="button" onclick="reply_click(this.id);">Yes</button>
+    <button id="No" type="button" onclick="reply_click(this.id);">No</button>
+
+    {% else %}
+    <!-- no feedback -->
+    &nbsp;
+    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 1 }}, 'participant_uid': {{ query.participant_uid }}});">Yes</button>
+    <button type="button" onclick="next_widget.processAnswer({'target_winner': {{ 0 }}, 'participant_uid': {{ query.participant_uid }}});">No</button>
+    {% endif %}
 </div>
 
 
+
 <script>
+
+function add_button() {
+  var element = document.createElement("button");
+  element.type = "button";
+  element.value = "Proceed";
+  element.id = "Proceed";
+}
+
+var reply_click = function(btnLabel) {
+  // remove buttons
+  document.getElementByID("Yes").remove();
+  document.getElementByID("No").remove();
+
+  // Provide feedback
+  if (btnLabel=="Yes" && query.same || btnLabel=="No" && !query.same) {
+    display_text("Correct");
+  }
+  else {
+    display_text("Incorrect");
+  }
+  add_button();   // make proceed button display
+  // click on Proceed to advance - input to process answer will be determined from x
+  document.getElementById("Proceed").onclick = next_widget.processAnswer({'target_winner': {{ btnLabel == "Yes" }}, 
+                                                                          'participant_uid': {{ query.participant_uid }}});
+}
+
+function display_text(text) {
+  var h = document.createElement("H1");                // Create a <h1> element
+  var t = document.createTextNode(text);         // Create a text node
+  h.appendChild(t);                                   // Append the text to <h1>
+}
+
+}
 </script>
 </div>
 

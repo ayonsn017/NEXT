@@ -48,5 +48,8 @@ processAnswer:
         target_winner:
           description: Participant's answer. Must be between 0 and 1.
           type: num
+        participant_uid:
+          description: Participant unique ID
+          type: str
           
 
