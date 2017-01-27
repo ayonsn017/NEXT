@@ -46,7 +46,7 @@ class MyApp:
         mol1['label'] = 'mol1'
         mol2['label'] = 'mol2'
 
-        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type}
+        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid}
 
     def processAnswer(self, butler, alg, args):
         
@@ -62,6 +62,7 @@ class MyApp:
                 right_id = target['target_id']
         '''
         target_winner = args['target_winner']
+        participant_uid = args['participant_uid']
         # make a getModel call ~ every n/4 queries - note that this query will NOT be included in the predict
         experiment = butler.experiment.get()
         num_reported_answers = butler.experiment.increment(key='num_reported_answers_for_' + query['alg_label'])
