@@ -13,6 +13,7 @@ args:
   failure_probability: 0.01
   num_tries: 50
   participant_to_algorithm_management: one_to_many
+<<<<<<< HEAD
   targets:
     targetset:
     - {alt_description: I'm drowning in work., alt_type: text, primary_description: I'm
@@ -74,3 +75,5 @@ args:
         to get some air?', primary_type: text, target_id: '24'}
     - {alt_description: 'Staring contest?', alt_type: text, primary_description: 'Staring
         contest?', primary_type: text, target_id: '25'}
+=======
+>>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
