@@ -32,11 +32,11 @@ class RandomInstanceGenerator:
         else:
             mol2, rep2, mol1, rep1, same = self.distributions[index][:self.probability_index]
             
-        return [rep1 + '_' + mol1, rep2 + '_' +mol1, same]
+        return [rep1 + '_' + mol1, rep2 + '_' +mol2, same]
 
 
 if __name__ == '__main__':
-    input_fname = '03_TrainingPool/training_dist_LewisSF.csv'
+    input_fname = '../../../../local/data/03_TrainingPool/training_dist_LewisSF.csv'
 
     instance_generator1 = RandomInstanceGenerator(input_fname, seed=10)
     
