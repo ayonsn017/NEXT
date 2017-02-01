@@ -25,7 +25,6 @@ for idx,alg_id in enumerate(alg_ids):
         alg_item['alg_label'] = 'Test'
     else:
         alg_item['alg_label'] = alg_id    
-    alg_item['test_alg_label'] = 'Test'
     alg_item[pretest_file_key] = pretest_dist_fname
     alg_item[training_file_key] = training_dist_fname
     alg_item[posttest_file_key] = posttest_dist_fname
