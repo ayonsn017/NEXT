@@ -47,8 +47,6 @@ algorithm_management_settings['params'] = params
 # Create experiment dictionary
 initExp = {}
 initExp['args'] = {}
-#initExp['args']['n'] = 30
-initExp['args']['d'] = 2
 initExp['args']['pretest_count'] = 2
 initExp['args']['training_count'] = 6
 initExp['args']['posttest_count'] = 4
@@ -59,8 +57,6 @@ initExp['args']['instructions'] = 'Are the following two molecules the same?'
 initExp['args']['debrief'] = 'Test debrief'
 initExp['args']['num_tries'] = 1 # the number of questions the participant will see
 initExp['app_id'] = 'MoleculesPoolBasedTripletMDS'
-#initExp['site_id'] = 'replace this with working site id'
-#initExp['site_key'] = 'replace this with working site key'
 
 
 curr_dir = os.path.dirname(os.path.abspath(__file__))

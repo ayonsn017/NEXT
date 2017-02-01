@@ -1,11 +1,5 @@
 initExp:
   args:
-    n:
-      description: Number of targets
-      type: num
-    d:
-      description: Dimension of embedding
-      type: num
     pretest_count:
       description: Number of pretest questions to show to the participant.
       type: num

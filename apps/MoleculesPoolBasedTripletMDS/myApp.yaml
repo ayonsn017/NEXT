@@ -27,9 +27,6 @@ initExp:
         instructions:
           default: Please select, using your mouse or left and right arrow keys, the item on the bottom that is closest to the top.
           optional: true
-        d:
-          description: Desired dimension of resulting embedding.
-          type: num
         pretest_count:
           description: Number of pretest questions (int) to show to the participant.
           type: num
