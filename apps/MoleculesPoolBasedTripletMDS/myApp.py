@@ -16,7 +16,6 @@ class MyApp:
 
     def initExp(self, butler, init_algs, args):
         exp_uid = butler.exp_uid
-        alg_label = butler.alg_label
 
         if 'targetset' in args['targets'].keys():
             n  = len(args['targets']['targetset'])
@@ -42,26 +41,6 @@ class MyApp:
         # get pretest, training and posttest file names
         alg_list = args[self.alg_list_key]
 
-        # log data
-        log_fname = 'log.txt'
-        log_file = open(log_fname, 'a')
-        if alg_label is None:
-            log_file.write('Original Label: none' + '\n')
-        else:
-            log_file.write('Original Label: ' + alg_label  + '\n')
-
-        log_file.write(str(butler) + '\n')
-
-
-        for alg_item in alg_list:
-            #log_file.write(str(alg_item) + '\n')
-            if alg_item[self.alg_label_key] == alg_label:
-                alg_data[pretest_file_key] = alg_item[self.pretest_file_key]
-                alg_data[training_file_key] = alg_item[self.training_file_key]
-                alg_data[posttest_file_key] = alg_item[self.posttest_file_key]
-                break
-        log_file.close()
-        
         alg_data['pretest_file'] =str(self.test_int)
         self.test_int += 1
         alg_data['training_file'] = 'sdfasf'
