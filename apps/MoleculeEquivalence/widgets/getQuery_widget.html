@@ -56,10 +56,12 @@ div.feedback_box {
 
 </style>
 <div>
-    Are the following two molecules the same?
-    <p id="question_type">The type of question is {{ query.ques_type}}</p>
-    <p id="same">The two molecules are {{ query.same }}</p>
+    <h2>Are the following two molecules the same? </h2>
+    <!-- <p id="question_type">The type of question is {{ query.ques_type}}</p>
+    <p id="same">The two molecules are {{ query.same }}</p> -->
 </div>
+
+<br>
 
 <div class="row">
   <!-- Left Target -->
@@ -93,6 +95,7 @@ div.feedback_box {
   </div>
 </div>
 </div>
+<br>
     {% if query.ques_type == "training" %}
     <!-- provide feedback -->
     &nbsp;
@@ -148,16 +151,16 @@ var submit_response = function() {
 
 var generate_message = function(same, response){
     if (same && response){
-        feedback_message = "Correct. The two molecules are the same.";
+        feedback_message = "Your answer is Correct. The two molecules are the same.";
     }
     else if (!same && !response){
-        feedback_message = "Correct. The two molecules are different.";
+        feedback_message = "Your answer is Correct. The two molecules are different.";
     }
     else if (!same && response){
-        feedback_message = "Incorrect. The two molecules are different.";
+        feedback_message = "Your answer is Incorrect. The two molecules are different.";
     }
     else {
-        feedback_message = "Incorrect. The two molecules are the same.";
+        feedback_message = "Your answer is Incorrect. The two molecules are the same.";
     }
 }
 

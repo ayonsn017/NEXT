@@ -1,7 +1,7 @@
 import time
 import numpy.random
 import next.utils as utils
-from apps.MoleculesPoolBasedTripletMDS.algs.RandomTrainTest import RandomInstanceGenerator
+from apps.MoleculeEquivalence.algs.RandomTrainTest import RandomInstanceGenerator
 import ast
 
 class RandomTrainTest:

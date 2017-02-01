@@ -1,16 +1,16 @@
-# MoleculesPoolBasedTripletMDS asks triplet comparison questions of the form "which is closer to item i, item j or k' to find an embedding of the items into Euclidean space.
+# MoleculeEquivalence shows participants two molecules in different representations and asks them if those two molecules are the same or not
 extends: [base.yaml]
 initExp:
   args:
     app_id:
-      values: [MoleculesPoolBasedTripletMDS]
+      values: [MoleculeEquivalence]
     args:
       values:
         alg_list:
           values:
             values:
               alg_id:
-                description: Supported algorithm types for PoolBasedTripletMDS.
+                description: Supported algorithm types for MoleculeEquivalence.
                 values: [RandomTrainTest]
               pretest_file:
                 description: a pretest file name which may contain a list of instances or a distribution depending on the algorithm to launch

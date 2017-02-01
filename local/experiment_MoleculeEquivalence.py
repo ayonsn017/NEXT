@@ -56,7 +56,7 @@ initExp['args']['instructions'] = 'Answer the following question'
 initExp['args']['debrief'] = 'Thank you for your participation. Your response has been recorded '
 # the number of questions the participant will see, this value will be calculated by adding pretest_count, training_count and posttest_count
 initExp['args']['num_tries'] = 1 
-initExp['app_id'] = 'MoleculesPoolBasedTripletMDS'
+initExp['app_id'] = 'MoleculeEquivalence'
 
 
 curr_dir = os.path.dirname(os.path.abspath(__file__))

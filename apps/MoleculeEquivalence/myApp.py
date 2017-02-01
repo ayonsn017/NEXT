@@ -10,7 +10,7 @@ class MyApp:
     posttest_file_key = 'posttest_file'
 
     def __init__(self,db):
-        self.app_id = 'MoleculesPoolBasedTripletMDS'
+        self.app_id = 'MoleculeEquivalence'
         self.TargetManager = next.apps.AltDescTargetManager.AltDescTargetManager(db)
 
     def initExp(self, butler, init_algs, args):
