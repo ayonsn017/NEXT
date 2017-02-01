@@ -8,7 +8,6 @@ class MyApp:
     pretest_file_key = 'pretest_file'
     training_file_key = 'training_file'
     posttest_file_key = 'posttest_file'
-    test_int = 0
 
     def __init__(self,db):
         self.app_id = 'MoleculesPoolBasedTripletMDS'
@@ -25,6 +24,7 @@ class MyApp:
         args['n'] = n
         del args['targets']
 
+        # get the pretest, training and posttest questions count and forward them to the algorithms
         alg_data = {}
         algorithm_keys = ['pretest_count', 'training_count', 'posttest_count']
         for key in algorithm_keys:
@@ -38,54 +38,46 @@ class MyApp:
 
         args['num_tries'] = num_tries
 
-        # get pretest, training and posttest file names
+        # get pretest, training and posttest file names and add them to the alg data
         alg_list = args[self.alg_list_key]
-
-        alg_data['pretest_file'] =str(self.test_int)
-        self.test_int += 1
-        alg_data['training_file'] = 'sdfasf'
-        alg_data['posttest_file'] = 'asfdasdf'
+        alg_data[self.alg_list_key] = str(alg_list)
 
         # calls initExp from algs
         init_algs(alg_data)
         return args
 
     def getQuery(self, butler, alg, args):
+
+        mol1_index = 0
+        mol2_index = 1
+        same_index = 2
+        ques_type_index = 3
+
         exp_uid = butler.exp_uid
-        participant_uid = args['participant_uid']
-        alg_response = alg({'participant_uid':participant_uid})
-        mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[0])
-        mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[1])
-        same = alg_response[2]
-        ques_type = alg_response[3]
+        participant_uid = args['participant_uid'] # get the participant_uid to send to the front end
+        
+        alg_response = alg({'participant_uid':participant_uid}) # get a specific question for this participant
+
+        mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol1_index])
+        mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol2_index])
+        same = alg_response[same_index]
+        ques_type = alg_response[ques_type_index]
+
         mol1['label'] = 'mol1'
         mol2['label'] = 'mol2'
 
         return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid}
 
     def processAnswer(self, butler, alg, args):
-        
+                
         query = butler.queries.get(uid=args['query_uid'])
-        '''
-        targets = query['target_indices']
-        for target in targets:
-            if target['label'] == 'center':
-                center_id = target['target_id']
-            elif target['label'] == 'left':
-                left_id = target['target_id']
-            elif target['label'] == 'right':
-                right_id = target['target_id']
-        '''
+
         target_winner = args['target_winner']
         participant_uid = args['participant_uid']
         # make a getModel call ~ every n/4 queries - note that this query will NOT be included in the predict
         experiment = butler.experiment.get()
         num_reported_answers = butler.experiment.increment(key='num_reported_answers_for_' + query['alg_label'])
         
-        '''
-        n = experiment['args']['n']
-        q = [left_id, right_id,center_id] if target_winner==left_id else [right_id, left_id,center_id]
-        '''
 
         # this is a call to the algorithm processAnswer method
         alg({'left_id':0, 'right_id':1, 'center_id':2, 'target_winner':target_winner})

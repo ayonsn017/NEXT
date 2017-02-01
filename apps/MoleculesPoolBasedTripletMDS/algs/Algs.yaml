@@ -9,15 +9,9 @@ initExp:
     posttest_count:
       description: Number of posttest questions to show to the participant.
       type: num
-    pretest_file:
-      description: The filename to contain either the list of pretest instances or pretest distribution depending on the algorithm
-      type: string
-    training_file:
-      description: The filename to contain either the list of training instnaces or training distribution depending on the algorithm
-      type: string
-    posttest_file:
-      description: The filename to contain either the list of posttest instances or posttest distribution depending on the algorithm
-      type: string
+    alg_list:
+      description: A tuple of dictionaries containing information regarding all the algorithms
+      type: str
   rets:
     type: bool
     description: A boolean indicating success

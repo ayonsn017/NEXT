@@ -5,9 +5,9 @@ sys.path.append("../")
 from launch_experiment import *
 
 target_file = 'data/01_X/mol_img_dict.json'
-pretest_dist_fname = 'data/02_TestDistribution/test_dist_LewisSF.csv'
-training_dist_fname = 'data/03_TrainingPool/training_dist_LewisSF.csv'
-posttest_dist_fname = 'data/02_TestDistribution/test_dist_LewisSF.csv'
+pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
+training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
+posttest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 
 pretest_file_key = 'pretest_file'
 training_file_key = 'training_file'
@@ -53,9 +53,10 @@ initExp['args']['posttest_count'] = 4
 initExp['args']['participant_to_algorithm_management'] = 'one_to_one'  # assign one participant to one condition only
 initExp['args']['algorithm_management_settings'] = algorithm_management_settings 
 initExp['args']['alg_list'] = alg_list 
-initExp['args']['instructions'] = 'Are the following two molecules the same?'
-initExp['args']['debrief'] = 'Test debrief'
-initExp['args']['num_tries'] = 1 # the number of questions the participant will see
+initExp['args']['instructions'] = 'Answer the following question'
+initExp['args']['debrief'] = 'Thank you for your participation. Your response has been recorded '
+# the number of questions the participant will see, this value will be calculated by adding pretest_count, training_count and posttest_count
+initExp['args']['num_tries'] = 1 
 initExp['app_id'] = 'MoleculesPoolBasedTripletMDS'
 
 
@@ -71,13 +72,3 @@ host = "localhost:8000"
 print "It's happening"
 exp_uid_list = launch_experiment(host, experiment_list)
 print "Made experiments {}".format(exp_uid_list)
-# Update the cartoon_dueling.html file wit the exp_uid_list and widget_key_list
-# with open('strange_fruit_triplet.html','r') as page:
-#   print "opended file"
-#   page_string = page.read()
-#   page_string = page_string.replace("{{exp_uid_list}}", str(exp_uid_list))
-#   page_string = page_string.replace("{{widget_key_list}}", str(widget_key_list))
-#   with open('../../next_frontend_base/next_frontend_base/templates/strange_fruit_triplet.html','w') as out:
-#     out.write(page_string)
-#     out.flush()
-#     out.close()

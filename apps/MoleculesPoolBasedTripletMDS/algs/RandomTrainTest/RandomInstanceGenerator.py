@@ -15,10 +15,10 @@ class RandomInstanceGenerator:
             np.random.seed(seed);
 
 
-    def generate_instance(self):
+    def generate_question(self):
         """
         return an instance generated using the distribution
-        :return: [str, str, str, str, int], [molecule1, representation1, molecule2, representation2, same], 
+        :return: [str, str, int], [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same], 
                     same is 1 if the two molecules are the same 0 otherwise
         """
         multinomial_draw = np.random.multinomial(1, self.probabilities, size=1)[0]
@@ -28,10 +28,11 @@ class RandomInstanceGenerator:
         # generate a RV from Bernoulli distribution to decide whether the molecule positions will be flipped or not
         flip = np.random.binomial(1, 0.5)
         if flip == 0:
-            return self.distributions[index][:self.probability_index]
+            mol1, rep1, mol2, rep2, same =self.distributions[index][:self.probability_index]
         else:
-            mol1, rep1, mol2, rep2, same = self.distributions[index][:self.probability_index]
-            return [mol2, rep2, mol1, rep1, same]
+            mol2, rep2, mol1, rep1, same = self.distributions[index][:self.probability_index]
+            
+        return [rep1 + '_' + mol1, rep2 + '_' +mol1, same]
 
 
 if __name__ == '__main__':
@@ -41,10 +42,10 @@ if __name__ == '__main__':
     
 
     for i in range(6):
-        print i, 'instance generator round 1', instance_generator1.generate_instance()
+        print i, 'instance generator round 1', instance_generator1.generate_question()
         
     np.random.seed(10)
 
     for i in range(6):
-        print i, 'instance generator round 2', instance_generator1.generate_instance()
+        print i, 'instance generator round 2', instance_generator1.generate_question()
 
