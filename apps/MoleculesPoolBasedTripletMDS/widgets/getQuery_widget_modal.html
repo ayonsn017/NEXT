@@ -16,12 +16,12 @@
     outline: 1px solid black;
   }
 
-/*div.modal.in .modal-dialog {
+div.modal.in .modal-dialog {
         position:fixed;
         bottom:7%;
         right:20%;
         margin:fixed;
-    }*/
+    }
 
 /*div.modal.in .modal-dialog.modal {
   max-height: calc(100% - 100px);
@@ -30,14 +30,6 @@
     left: 50%;
   transform: translate(-100%, -100%);
 }*/
-
-div.feedback_box {
-    background-color: white;
-    color: black;
-    margin: 20px 0 20px 0;
-    padding: 20px;
-    visibility: hidden;
-	}
 
   div.row > div.col-xs-12 {
     height:100%;
@@ -99,6 +91,23 @@ div.feedback_box {
     <button id="Yes" type="button" onclick="respond(this.id);">Yes</button>
     <button id="No" type="button" onclick="respond(this.id);">No</button>
 
+    <!-- Make feedback modal appear --> 
+    <div class="modal fade" id="modal_feedback" data-backdrop="static" data-keyboard="false " tabindex="-2" role="dialog" psoition="fixed" href="#">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn btn-danger"
+                    data-dismiss="modal" onclick="submit_response()">Proceed</button>
+          </div>
+          <div class="modal-body">
+            <h2 id="feedback_text">Feedback message</h2>
+          <br>
+          <div class="modal-footer">
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {% else %}
     <!-- no feedback -->
@@ -107,12 +116,6 @@ div.feedback_box {
     <button type="button" onclick="submit_no()">No</button>
     {% endif %}
 </div>
-<!-- Feedback div -->
-<div class="feedback_box" id="feedback_div">
-    <p id="feedback_text">Feedback message</p>
-    <button type="button" id="proceeed_btn" class="btn btn-danger"
-                    onclick="submit_response()">Proceed</button>
-</div>
 
 
 <script>
@@ -120,7 +123,7 @@ div.feedback_box {
 var response;
 var feedback_message;
 var respond = function(label){
-    console.log('setting response variable')       
+    console.log('setting response variable')        
 
     // Disable buttons during feedback
     document.getElementById("Yes").disabled = true; 
@@ -129,10 +132,8 @@ var respond = function(label){
     // Display modal with feedback
     response = (label === "Yes");
     generate_message({{ query.same }}, response);
-    $('#feedback_text').text(feedback_message);
-
-    // Show feedback div
-    $('#feedback_div').css('visibility','visible'); 
+    $('#modal_feedback').modal('show');
+    $('h2#feedback_text').text(feedback_message);
 }
 
 var submit_response = function() {
