@@ -93,24 +93,16 @@ def unpack_csv_file(s):
     zip_file = zipfile.ZipFile(base64_zip)
     files = zipfile_to_dictionary(zip_file)
     # assuming len(files) == 1 and files[0][-3:] == 'csv'
-<<<<<<< HEAD
-=======
     # if len(files) > 1 or files.keys()[0][-3:] not in {'csv', 'txt'}:
         # raise ValueError('Only one TXT/CSV file supported in the ZIP file')
 
->>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
     strings = files[files.keys()[0]].split('\n')
     targets = [{'target_id': str(i),
                 'primary_type': 'text',
                 'primary_description': string,
                 'alt_type': 'text',
-<<<<<<< HEAD
-                'alt_description': string} for i, string in enumerate(strings)]
-    utils.debug_print(targets)
-=======
                 'alt_description': string}
                for i, string in enumerate(strings[:-1])]  # -1 because last newline
->>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
     return targets
 
 
