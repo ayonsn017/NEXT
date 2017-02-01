@@ -16,6 +16,21 @@
     outline: 1px solid black;
   }
 
+div.modal.in .modal-dialog {
+        position:fixed;
+        bottom:7%;
+        right:20%;
+        margin:fixed;
+    }
+
+/*div.modal.in .modal-dialog.modal {
+  max-height: calc(100% - 100px);
+  position: absolute;
+    top: 50%;
+    left: 50%;
+  transform: translate(-100%, -100%);
+}*/
+
   div.row > div.col-xs-12 {
     height:100%;
     outline: 1px solid black;
@@ -30,6 +45,7 @@
     max-width:100%;
     height:auto;
   }
+
 </style>
 <div>
     Are the following two molecules the same?
@@ -72,53 +88,88 @@
     {% if query.ques_type == "training" %}
     <!-- provide feedback -->
     &nbsp;
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': 1, 'participant_uid': '{{ query.participant_uid }}'});">Yes</button>
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': 0, 'participant_uid': '{{ query.participant_uid }}'});">No</button>
-    <!-- 
-    <button id="Yes" type="button" onclick="reply_click(this.id);">Yes</button>
-    <button id="No" type="button" onclick="reply_click(this.id);">No</button> -->
+    <button id="Yes" type="button" onclick="respond(this.id);">Yes</button>
+    <button id="No" type="button" onclick="respond(this.id);">No</button>
+
+    <!-- Make feedback modal appear --> 
+    <div class="modal fade" id="modal_feedback" data-backdrop="static" data-keyboard="false " tabindex="-2" role="dialog" psoition="fixed" href="#">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="btn btn-danger"
+                    data-dismiss="modal" onclick="submit_response()">Proceed</button>
+          </div>
+          <div class="modal-body">
+            <h2 id="feedback_text">Feedback message</h2>
+          <br>
+          <div class="modal-footer">
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {% else %}
     <!-- no feedback -->
     &nbsp;
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': 1, 'participant_uid': '{{ query.participant_uid }}'});">Yes</button>
-    <button type="button" onclick="next_widget.processAnswer({'target_winner': 0, 'participant_uid': '{{ query.participant_uid }}'});">No</button>
+    <button type="button" onclick="submit_yes()">Yes</button>
+    <button type="button" onclick="submit_no()">No</button>
     {% endif %}
 </div>
 
 
-
 <script>
 
-function add_button() {
-  var element = document.createElement("button");
-  element.type = "button";
-  element.value = "Proceed";
-  element.id = "Proceed";
+var response;
+var feedback_message;
+var respond = function(label){
+    console.log('setting response variable')        
+
+    // Disable buttons during feedback
+    document.getElementById("Yes").disabled = true; 
+    document.getElementById("No").disabled = true; 
+
+    // Display modal with feedback
+    response = (label === "Yes");
+    generate_message({{ query.same }}, response);
+    $('#modal_feedback').modal('show');
+    $('h2#feedback_text').text(feedback_message);
 }
 
-var reply_click = function(btnLabel) {
-  console.log('print');
-  // remove buttons
-  // document.getElementByID("Yes").remove();
-  // document.getElementByID("No").remove();
-
-  // // Provide feedback
-  // if (btnLabel=="Yes" && query.same || btnLabel=="No" && !query.same) {
-  //   display_text("Correct");
-  // }
-  // else {
-  //   display_text("Incorrect");
-  // }
-  // add_button();   // make proceed button display
-  // // click on Proceed to advance - input to process answer will be determined from x
-  // document.getElementById("Proceed").onclick = next_widget.processAnswer({'target_winner': btnLabel === "Yes", 'participant_uid': "{{ query.participant_uid }}"});
+var submit_response = function() {
+    /* note: response variable always exists because the variable is assigned before modal
+    displays, showing this button that calls this function*/ 
+    if (response) {
+        submit_yes()
+    }
+    else {
+        submit_no()
+    }
 }
 
-function display_text(text) {
-  var h = document.createElement("H1");                // Create a <h1> element
-  var t = document.createTextNode(text);         // Create a text node
-  h.appendChild(t);                                   // Append the text to <h1>
+var generate_message = function(same, response){
+    if (same && response){
+        feedback_message = "Correct. The two molecules are the same.";
+    }
+    else if (!same && !response){
+        feedback_message = "Correct. The two molecules are different.";
+    }
+    else if (!same && response){
+        feedback_message = "Incorrect. The two molecules are different.";
+    }
+    else {
+        feedback_message = "Incorrect. The two molecules are the same.";
+    }
+}
+
+var submit_yes = function() {
+    console.log('Submitting yes');
+    next_widget.processAnswer({'target_winner': true, 'participant_uid': "{{ query.participant_uid }}"});    
+}
+
+var submit_no = function() {
+    console.log('Submitting no');
+    next_widget.processAnswer({'target_winner': false, 'participant_uid': "{{ query.participant_uid }}"});
 }
 
 </script>
