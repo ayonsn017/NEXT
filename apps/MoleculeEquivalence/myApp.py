@@ -80,7 +80,7 @@ class MyApp:
         
 
         # this is a call to the algorithm processAnswer method
-        alg({'left_id':0, 'right_id':1, 'center_id':2, 'target_winner':target_winner})
+        alg({'target_winner':target_winner, 'participant_uid':participant_uid})
         
         q= [0, 1, 2]
 

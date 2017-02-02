@@ -43,15 +43,9 @@ getQuery:
       
 processAnswer:
     args:
-      center_id:
-        description: The ID of the center target
-        type: num
-      left_id: 
-        description: The ID of the left target
-        type: num
-      right_id: 
-        description: The ID of the right target
-        type: num
+      participant_uid:
+        description: The id of the participant for whom the question is generated
+        type: string
       target_winner:
         description: The ID of the target that won the given query.
         type: num

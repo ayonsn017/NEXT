@@ -74,6 +74,8 @@ class RandomTrainTest:
         # new participant
         if participant_uid not in participant_answers_count_dict:
             participant_answers_count_dict[participant_uid] = 0
+            # need this set step, otherwise butler values are not updated
+            butler.algorithms.set(key=self.participant_answers_count_dict_key, value=participant_answers_count_dict)   
             num_reported_answers = 0
         else:
             num_reported_answers = participant_answers_count_dict[participant_uid]
@@ -95,13 +97,22 @@ class RandomTrainTest:
 
         mol1, mol2, same = question_generator.generate_question() 
 
-        # increment the number of questions the participant has viewed
-        participant_answers_count_dict[participant_uid] = num_reported_answers + 1    
-        butler.algorithms.set(key=self.participant_answers_count_dict_key, value=participant_answers_count_dict)  
         return [mol1, mol2, same, ques_type]
 
-    def processAnswer(self,butler,center_id,left_id,right_id,target_winner):
+    def processAnswer(self,butler, participant_uid, target_winner):
+        """
+        :param butler: Butler, the butler
+        :participant_uid: str, a unique identifier for the participant
+        :target_winner: int, index of the target the participant selected
+        """
         num_reported_answers = butler.algorithms.increment(key='num_reported_answers')
+
+        # increment the number of questions the participant has viewed
+        participant_answers_count_dict = butler.algorithms.get(key=self.participant_answers_count_dict_key)
+        participant_answers_count_dict[participant_uid] = participant_answers_count_dict[participant_uid] + 1
+        # need this set step, otherwise butler values are not updated
+        butler.algorithms.set(key=self.participant_answers_count_dict_key, value=participant_answers_count_dict)   
+
         return True
 
 
