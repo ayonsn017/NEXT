@@ -105,11 +105,15 @@ class RandomTrainTest:
         :participant_uid: str, a unique identifier for the participant
         :target_winner: int, index of the target the participant selected
         """
-        num_reported_answers = butler.algorithms.increment(key='num_reported_answers')
+        butler.algorithms.increment(key='num_reported_answers')
 
         # increment the number of questions the participant has viewed
         participant_answers_count_dict = butler.algorithms.get(key=self.participant_answers_count_dict_key)
-        participant_answers_count_dict[participant_uid] = participant_answers_count_dict[participant_uid] + 1
+        num_reported_answers = participant_answers_count_dict[participant_uid] + 1
+        if num_reported_answers == 12:
+            participant_answers_count_dict.pop(participant_uid, 'None')
+        else:
+            participant_answers_count_dict[participant_uid] = num_reported_answers
         # need this set step, otherwise butler values are not updated
         butler.algorithms.set(key=self.participant_answers_count_dict_key, value=participant_answers_count_dict)   
 
