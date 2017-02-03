@@ -7,17 +7,41 @@ from launch_experiment import *
 target_file = 'data/01_X/mol_img_dict.json'
 pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
+training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
 posttest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 
 pretest_file_key = 'pretest_file'
 training_file_key = 'training_file'
 posttest_file_key = 'posttest_file'
+alg_id_key = 'alg_id'
+alg_label_key = 'alg_label'
 
 experiment_list = []
-alg_ids = ['RandomTrainTest','RandomTrainTest']
+alg_ids = ['FixedTrainRandomTest','RandomTrainTest']
 
 # Create common alg_list
 alg_list = []
+
+
+# parameters for FixedTrainRandomTest
+alg_item={}
+alg_item[alg_id_key] = alg_ids[0]
+alg_item[alg_label_key] = alg_ids[0]
+alg_item[pretest_file_key] = pretest_dist_fname
+alg_item[training_file_key] = training_dataset_fname
+alg_item[posttest_file_key] = posttest_dist_fname
+alg_list.append(alg_item)
+
+# parameters for RandomTrainTest
+alg_item={}
+alg_item[alg_id_key] = alg_ids[1]
+alg_item[alg_label_key] = alg_ids[1]
+alg_item[pretest_file_key] = pretest_dist_fname
+alg_item[training_file_key] = training_dist_fname
+alg_item[posttest_file_key] = posttest_dist_fname
+alg_list.append(alg_item)
+
+'''
 for idx,alg_id in enumerate(alg_ids):
     alg_item = {}
     alg_item['alg_id'] = alg_id
@@ -27,10 +51,12 @@ for idx,alg_id in enumerate(alg_ids):
         alg_item['alg_label'] = alg_id    
     alg_item[pretest_file_key] = pretest_dist_fname
     alg_item[training_file_key] = training_dist_fname
+    #alg_item[training_file_key] = training_dataset_fname
     alg_item[posttest_file_key] = posttest_dist_fname
 
     #alg_item['params'] = {}
     alg_list.append(alg_item)
+'''
 
 # Create common algorithm management settings  
 params = []

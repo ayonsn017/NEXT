@@ -11,7 +11,7 @@ initExp:
             values:
               alg_id:
                 description: Supported algorithm types for MoleculeEquivalence.
-                values: [RandomTrainTest]
+                values: [RandomTrainTest, FixedTrainRandomTest]
               pretest_file:
                 description: a pretest file name which may contain a list of instances or a distribution depending on the algorithm to launch
                 type: str
