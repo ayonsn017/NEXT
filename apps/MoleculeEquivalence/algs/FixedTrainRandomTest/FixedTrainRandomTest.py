@@ -1,8 +1,7 @@
 import time
 import numpy.random
 import next.utils as utils
-from apps.MoleculeEquivalence.algs.FixedTrainRandomTest import RandomInstanceGenerator
-from apps.MoleculeEquivalence.algs.FixedTrainRandomTest import FixedInstanceReader
+from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedInstanceReader, parameters
 import ast
 
 class FixedTrainRandomTest:
@@ -19,8 +18,9 @@ class FixedTrainRandomTest:
     pretest_generator_key = 'pretest_generator'
     training_generator_key = 'training_generator'
     posttest_generator_key = 'posttest_generator'
+    pretest_seed_key = 'pretest_seed'
+    posttest_seed_key = 'posttest_seed_key'
     participant_answers_count_dict_key = 'participant_answers_count_dict'
-    participant_question_generator_dict_key = 'participant_question_generator_dict'
     alg_label_key = 'alg_label'
     def initExp(self,butler, pretest_count, training_count, posttest_count, alg_list):
         """
