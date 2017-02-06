@@ -65,7 +65,8 @@ for algorithm in alg_list:
 	        'proportion': 1.0 / len(alg_list)}]
 
 algorithm_management_settings = {}
-algorithm_management_settings['mode'] = 'fixed_proportions'
+#algorithm_management_settings['mode'] = 'fixed_proportions'
+algorithm_management_settings['mode'] = 'custom'
 algorithm_management_settings['params'] = params
 
 

@@ -5,6 +5,8 @@ import next.apps.AltDescTargetManager
 class MyApp:
     alg_list_key = 'alg_list'
     alg_label_key = 'alg_label'
+    alg_counts_key = 'alg_counts'
+    assign_alg_lock_name = 'assign_alg_lock'
     pretest_file_key = 'pretest_file'
     training_file_key = 'training_file'
     posttest_file_key = 'posttest_file'
@@ -12,10 +14,11 @@ class MyApp:
     def __init__(self,db):
         self.app_id = 'MoleculeEquivalence'
         self.TargetManager = next.apps.AltDescTargetManager.AltDescTargetManager(db)
+        self.alg_counts = None
 
     def initExp(self, butler, init_algs, args):
         exp_uid = butler.exp_uid
-
+        
         if 'targetset' in args['targets'].keys():
             n  = len(args['targets']['targetset'])
             self.TargetManager.set_targetset(exp_uid, args['targets']['targetset'])
@@ -88,6 +91,47 @@ class MyApp:
 
     def getModel(self, butler, alg, args):
         return alg()
+
+    def chooseAlg(self, butler, alg_list, args):
+        """
+        method to choose which algorithm a new participant gets assigned to
+        we currently assign participants to algorithms in a round robin way
+        :param butler: Butler, the butler
+        :alg_list: list(dict): list of algorithms
+        :args: dict: the arguments
+        """
+        # acquiring lock before reading any information
+        assign_alg_lock = butler.memory.lock(self.assign_alg_lock_name)
+        assign_alg_lock.acquire()
+
+        alg_counts = butler.other.get(key=self.alg_counts_key)
+
+        # if this is the first participant in the experiment then initialize the alg_counts
+        if alg_counts is None:
+            alg_counts = [0] * len(alg_list)
+
+        # find which algorithm has been assigned once less then to its predecessor in the list
+        index = -1
+
+        for i in range(1, len(alg_list)):
+            if alg_counts[i] < alg_counts[i-1]:
+                index = i
+                break
+
+        # if every algorithm has been chosen equal number of times then chose the first algorithm
+        if index == -1:
+            index = 0
+
+        alg_counts[index] = alg_counts[index] + 1
+        butler.other.set(key=self.alg_counts_key, value=alg_counts)
+
+        chosen_alg = alg_list[index]
+
+        # releasing lock after updating information
+        assign_alg_lock.release()
+
+        return chosen_alg
+
 
 
 
