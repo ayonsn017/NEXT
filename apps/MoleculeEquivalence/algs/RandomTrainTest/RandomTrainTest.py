@@ -15,12 +15,9 @@ class RandomTrainTest:
     pretest_file_key = 'pretest_file'
     training_file_key = 'training_file'
     posttest_file_key = 'posttest_file'
-    pretest_generator_key = 'pretest_generator'
-    training_generator_key = 'training_generator'
-    posttest_generator_key = 'posttest_generator'
     pretest_seed_key = 'pretest_seed'
     training_seed_key = 'training_seed'
-    posttest_seed_key = 'posttest_seed_key'
+    posttest_seed_key = 'posttest_seed'
     participant_info_dict_key = 'participant_info_dict'
     alg_label_key = 'alg_label'
     def initExp(self,butler, pretest_count, training_count, posttest_count, alg_list):
@@ -49,15 +46,6 @@ class RandomTrainTest:
             if alg_desc[self.alg_label_key] == butler.alg_label:
                 alg_params = alg_desc
 
-        # extract the pretest, training and posttest file names and instantiate the generators
-        '''
-        pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(alg_params[self.pretest_file_key])
-        butler.algorithms.set(key=self.pretest_generator_key, value=pretest_question_generator)
-        training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(alg_params[self.training_file_key])
-        butler.algorithms.set(key=self.training_generator_key, value=training_question_generator)
-        posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(alg_params[self.posttest_file_key])
-        butler.algorithms.set(key=self.posttest_generator_key, value=posttest_question_generator)
-        '''
         # save the pretest, training and posttest files
         butler.algorithms.set(key=self.pretest_file_key, value=alg_params[self.pretest_file_key])
         butler.algorithms.set(key=self.training_file_key, value=alg_params[self.training_file_key])
@@ -105,19 +93,26 @@ class RandomTrainTest:
             training_seed = butler.algorithms.get(key=self.training_seed_key)
             posttest_seed = butler.algorithms.get(key=self.posttest_seed_key)
 
-            # generate the questions for this participant and store them
-            pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
-            training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
-            posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
+            # log file
+            log_fname = 'log.txt'
+            log_file = open(log_fname, 'a')
+            log_file.write('RandomTrainTest:\n')
+            log_file.write('pretest_seed: ' + str(pretest_seed) + '\n')
+            log_file.write('posttest_seed: ' + str(posttest_seed) + '\n')
+            log_file.close()
 
+            # generate the questions for this participant and store them
             participant_questions = []
 
+            pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
             for i in range(pretest_count):
                 participant_questions.append(pretest_question_generator.generate_question())
 
+            training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
             for i in range(training_count):
                 participant_questions.append(training_question_generator.generate_question())
 
+            posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
             for i in range(posttest_count):
                 participant_questions.append(posttest_question_generator.generate_question())
 
@@ -143,16 +138,12 @@ class RandomTrainTest:
         
         # decide which type of question to show and generate that type of question
         if num_reported_answers < pretest_count:
-            #question_generator = butler.algorithms.get(key=self.pretest_generator_key)
             ques_type = self.pretest_key
         elif num_reported_answers >= pretest_count and num_reported_answers < pretest_count + training_count:
-            #question_generator = butler.algorithms.get(key=self.training_generator_key)
             ques_type = self.training_key
         elif num_reported_answers >= pretest_count + training_count:
-            #question_generator = butler.algorithms.get(key=self.posttest_generator_key)
             ques_type = self.posttest_key
 
-        #mol1, mol2, same = question_generator.generate_question() 
         mol1, mol2, same = participant_questions[num_reported_answers]
 
         return [mol1, mol2, same, ques_type]
@@ -165,17 +156,28 @@ class RandomTrainTest:
         """
         butler.algorithms.increment(key='num_reported_answers')
 
+        # get the question counts
+        pretest_count = butler.algorithms.get(key=self.pretest_count_key)
+        training_count = butler.algorithms.get(key=self.training_count_key)
+        posttest_count = butler.algorithms.get(key=self.posttest_count_key)
+
+        total_questions = pretest_count + training_count + posttest_count
+
         # increment the number of questions the participant has viewed
+        num_reported_answers_increment_lock = butler.memory.lock('num_reported_answers_increment_lock')
+        num_reported_answers_increment_lock.acquire()
         participant_info_dict = butler.algorithms.get(key=self.participant_info_dict_key)
         participant_info = participant_info_dict[participant_uid]
         num_reported_answers = participant_info.increment_num_reported_answers()
 
-        if num_reported_answers == 12:
+        # if participant has answered all questions then delete information related to him/her
+        if num_reported_answers == total_questions:
             participant_info_dict.pop(participant_uid, 'None')
         else:
             participant_info_dict[participant_uid] = participant_info
         # need this set step, otherwise butler values are not updated
         butler.algorithms.set(key=self.participant_info_dict_key, value=participant_info_dict)   
+        num_reported_answers_increment_lock.release()
 
         return True
 
