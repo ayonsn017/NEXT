@@ -1,6 +1,7 @@
 import json
 import next.utils as utils
 import next.apps.AltDescTargetManager
+from apps.MoleculeEquivalence.algs.Utils import parameters
 
 class MyApp:
     alg_list_key = 'alg_list'
@@ -39,6 +40,11 @@ class MyApp:
         num_tries += args['training_count']
         num_tries += args['posttest_count']
 
+        num_tries += parameters.introduction_instructions_count
+        num_tries += parameters.pretest_instructions_count
+        num_tries += parameters.training_instructions_count
+        num_tries += parameters.posttest_instructions_count
+
         args['num_tries'] = num_tries
 
         # get pretest, training and posttest file names and add them to the alg data
@@ -63,15 +69,21 @@ class MyApp:
         
         alg_response = alg({'participant_uid':participant_uid}) # get a specific question for this participant
 
-        mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol1_index])
-        mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol2_index])
-        same = alg_response[same_index]
         ques_type = alg_response[ques_type_index]
+
+        if ques_type == parameters.instruction_key:
+            mol1 = alg_response[mol1_index]
+            mol2 = alg_response[mol2_index]
+        else:
+            mol1  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol1_index])
+            mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol2_index])
+            mol1['label'] = 'mol1'
+            mol2['label'] = 'mol2'
+
+        same = alg_response[same_index]
+        
         ques_count = alg_response[ques_count_index]
         total_ques_count = alg_response[total_ques_count_index]
-
-        mol1['label'] = 'mol1'
-        mol2['label'] = 'mol2'
 
         return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid, 'ques_count': ques_count, 
                      'total_ques_count': total_ques_count }

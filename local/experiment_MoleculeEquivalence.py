@@ -79,8 +79,8 @@ initExp['args']['posttest_count'] = 4
 initExp['args']['participant_to_algorithm_management'] = 'one_to_one'  # assign one participant to one condition only
 initExp['args']['algorithm_management_settings'] = algorithm_management_settings 
 initExp['args']['alg_list'] = alg_list 
-initExp['args']['instructions'] = 'Answer the following question'
-initExp['args']['debrief'] = 'Thank you for your participation. Your response has been recorded '
+initExp['args']['instructions'] = 'Answer the following question.'
+initExp['args']['debrief'] = 'Thank you for your participation. Your response has been recorded.'
 # the number of questions the participant will see, this value will be calculated by adding pretest_count, training_count and posttest_count
 initExp['args']['num_tries'] = 1 
 initExp['app_id'] = 'MoleculeEquivalence'

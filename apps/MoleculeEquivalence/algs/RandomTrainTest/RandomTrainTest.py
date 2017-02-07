@@ -1,7 +1,7 @@
 import time
 import numpy.random
 import next.utils as utils
-from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, parameters, ParticipantInfo
+from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, parameters, ParticipantInfo, instructions
 import ast
 
 class RandomTrainTest:
@@ -169,6 +169,28 @@ class RandomTrainTest:
         """
         participant_questions = []
 
+        # introduction instruction 1
+        mol1 = instructions.get_introduction_instruction1()
+        mol2 = ''
+        same = 0
+        ques_type = parameters.instruction_key
+        participant_questions.append([mol1, mol2, same, ques_type])
+
+        # introduction instruction 2
+        mol1 = instructions.get_introduction_instruction1()
+        mol2 = ''
+        same = 0
+        ques_type = parameters.instruction_key
+        participant_questions.append([mol1, mol2, same, ques_type])
+
+        # pretest instruction
+        mol1 = instructions.get_pretest_instruction()
+        mol2 = ''
+        same = 0
+        ques_type = parameters.instruction_key
+        participant_questions.append([mol1, mol2, same, ques_type])
+
+        # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
         for i in range(pretest_count):
             # adding the question type
@@ -176,6 +198,19 @@ class RandomTrainTest:
             pretest_question.append(parameters.pretest_key)
             participant_questions.append(pretest_question)
 
+        # training instruction
+        mol1 = instructions.get_training_instruction()
+        mol2 = ''
+        same = 0
+        ques_type = parameters.instruction_key
+        participant_questions.append([mol1, mol2, same, ques_type])
+
+        #training instruction
+        mol1 = instructions.get_training_instruction()
+        mol2 = ''
+        same = 0
+
+        # training questions 
         training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
         for i in range(training_count):
             # adding the question type
@@ -183,6 +218,14 @@ class RandomTrainTest:
             training_question.append(parameters.training_key)
             participant_questions.append(training_question)
 
+        # posttest instruction
+        mol1 = instructions.get_posttest_instruction()
+        mol2 = ''
+        same = 0
+        ques_type = parameters.instruction_key
+        participant_questions.append([mol1, mol2, same, ques_type])
+
+        # posttest questions
         posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
         for i in range(posttest_count):
             # adding the question type

@@ -5,9 +5,12 @@ posttest_seed = 7864  # the starting seed to generate postest questions
 pretest_key = 'pretest'  # this is used as ques_type for pretest questions for the widget
 training_key = 'training'  # this is used as ques_type for pretest questions for the widget
 posttest_key = 'posttest'  # this is used as ques_type for pretest questions for the widget
+instruction_key = 'instruction'  # this is used as ques_type for instruction questions for the widget
 
 ques_gen_lock_name = 'ques_gen_lock'  # the name of the lock to be used for question generation
 
+introduction_instructions_count = 2
 pretest_instructions_count = 1
 training_instructions_count = 1
 posttest_instructions_count = 1
+

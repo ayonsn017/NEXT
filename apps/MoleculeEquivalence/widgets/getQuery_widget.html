@@ -35,9 +35,17 @@ div.feedback_box {
     background-color: white;
     color: black;
     margin: 20px 0 20px 0;
-    padding: 20px;
-    visibility: hidden;
-	}
+    padding: 0px;
+    display: none;
+}
+
+div.instruction_box{
+    background-color: white;
+    color: black;
+    margin: 20px 0 20px 0;
+    padding: 0px;
+    outline:1px solid black;
+}
 
   div.row > div.col-xs-12 {
     height:100%;
@@ -55,69 +63,82 @@ div.feedback_box {
   }
 
 </style>
-<div style="text-align:right;"><span style="font-size:35px;">{{ query.ques_count }}/{{ query.total_ques_count }}</span></div>
-<div>
-    <h2>Are the following two molecules the same? </h2>
-    <!-- <p id="question_type">The type of question is {{ query.ques_type}}</p>
-    <p id="same">The two molecules are {{ query.same }}</p> -->
-</div>
+{% if query.ques_type == "instruction" %}
+    <div class="instruction_box" id="instruction_div">
+        {{ query.target_indices[0]}}
+        <br>
+        &nbsp;
+        &nbsp;
+        <button type="button" id="proceeed_btn" class="btn btn-danger"
+                        onclick="submit_yes()">Proceed
+        </button>
+        <br>
+    </div>
+{% else %}
+    <div style="text-align:right;"><span style="font-size:35px;">{{ query.ques_count }}/{{ query.total_ques_count }}</span></div>
+    <div>
+        <h2>Are the following two molecules the same? </h2>
+    </div>
 
-<br>
+    <br>
 
-<div class="row">
-  <!-- Left Target -->
-  <div class="col-xs-6" id="left">
-    {% if query.target_indices[0].primary_type == "image" or query.target_indices[0].primary_type == "img"%}
-    <img class="center-block" src={{ query.target_indices[0].primary_description }}></img>
+    <div class="row">
+      <!-- Left Target -->
+      <div class="col-xs-6" id="left">
+        {% if query.target_indices[0].primary_type == "image" or query.target_indices[0].primary_type == "img"%}
+        <img class="center-block" src={{ query.target_indices[0].primary_description }}></img>
 
-    {% elif query.target_indices[0].primary_type == "text"%}
-    <div>{{ query.target_indices[0].primary_description }}</div>
+        {% elif query.target_indices[0].primary_type == "text"%}
+        <div>{{ query.target_indices[0].primary_description }}</div>
 
-    {% elif query.target_indices[0].primary_type == "video" %}
-    <video width="320" height="240" poster="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif" controls autoplay loop>
-      <source src={{ query.target_indices[0].primary_description }} type="video/mp4">
-	Your browser does not support the video tag.
-    </video>
-    {% endif %}
-  </div>
+        {% elif query.target_indices[0].primary_type == "video" %}
+        <video width="320" height="240" poster="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif" controls autoplay loop>
+          <source src={{ query.target_indices[0].primary_description }} type="video/mp4">
+    	Your browser does not support the video tag.
+        </video>
+        {% endif %}
+      </div>
 
-  <!-- Right Target -->
-  <div class="col-xs-6" id="right">
-    {% if query.target_indices[1].primary_type == "image" or query.target_indices[1].primary_type == "img" %}
-    <img class="center-block" src={{ query.target_indices[1].primary_description }}> </img>
-    {% elif query.target_indices[1].primary_type == "text" %}
-    <div>{{ query.target_indices[1].primary_description }}</div>
-    {% elif query.target_indices[0].primary_type == "video" %}
-    <video width="320" height="240" poster="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif" controls autoplay loop>
-      <source src={{ query.target_indices[1].primary_description }} type="video/mp4">
-	Your browser does not support the video tag.
-    </video>
-    {% endif %}
-  </div>
-</div>
-</div>
-<br>
-    {% if query.ques_type == "training" %}
-    <!-- provide feedback -->
-    &nbsp;
-    <button id="Yes" type="button" onclick="respond(this.id);">Yes</button>
-    <button id="No" type="button" onclick="respond(this.id);">No</button>
+      <!-- Right Target -->
+      <div class="col-xs-6" id="right">
+        {% if query.target_indices[1].primary_type == "image" or query.target_indices[1].primary_type == "img" %}
+        <img class="center-block" src={{ query.target_indices[1].primary_description }}> </img>
+        {% elif query.target_indices[1].primary_type == "text" %}
+        <div>{{ query.target_indices[1].primary_description }}</div>
+        {% elif query.target_indices[0].primary_type == "video" %}
+        <video width="320" height="240" poster="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif" controls autoplay loop>
+          <source src={{ query.target_indices[1].primary_description }} type="video/mp4">
+    	Your browser does not support the video tag.
+        </video>
+        {% endif %}
+      </div>
+    </div>
+    <div>
+    <br>
+        
+        {% if query.ques_type == "training" %}
+        <!-- provide feedback -->
+        &nbsp;
+        <button id="Yes" type="button" onclick="respond(this.id);">Yes</button>
+        <button id="No" type="button" onclick="respond(this.id);">No</button>
 
 
-    {% else %}
-    <!-- no feedback -->
-    &nbsp;
-    <button type="button" onclick="submit_yes()">Yes</button>
-    <button type="button" onclick="submit_no()">No</button>
-    {% endif %}
-</div>
-<!-- Feedback div -->
-<div class="feedback_box" id="feedback_div">
-    <p id="feedback_text">Feedback message</p>
-    <button type="button" id="proceeed_btn" class="btn btn-danger"
-                    onclick="submit_response()">Proceed</button>
-</div>
-
+        {% else %}
+        <!-- no feedback -->
+        &nbsp;
+        <button type="button" onclick="submit_yes()">Yes</button>
+        <button type="button" onclick="submit_no()">No</button>
+        {% endif %}
+    </div>
+    </div>
+    <br>
+    <!-- Feedback div -->
+    <div class="feedback_box" id="feedback_div">
+        <h2 id="feedback_text">Feedback message</h2>
+        <button type="button" id="proceeed_btn" class="btn btn-danger"
+                        onclick="submit_response()">Proceed</button>
+    </div>
+{% endif %}
 
 <script>
 
@@ -136,7 +157,7 @@ var respond = function(label){
     $('#feedback_text').text(feedback_message);
 
     // Show feedback div
-    $('#feedback_div').css('visibility','visible'); 
+    $('#feedback_div').css('display','block'); 
 }
 
 var submit_response = function() {
@@ -176,5 +197,5 @@ var submit_no = function() {
 }
 
 </script>
-</div>
+
 
