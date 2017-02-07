@@ -9,9 +9,6 @@ class RandomTrainTest:
     training_count_key = 'training_count'
     posttest_count_key = 'posttest_count'
     num_reported_answers_key = 'num_reported_answers'
-    pretest_key = 'pretest'
-    training_key = 'training'
-    posttest_key = 'posttest'
     pretest_file_key = 'pretest_file'
     training_file_key = 'training_file'
     posttest_file_key = 'posttest_file'
@@ -96,31 +93,9 @@ class RandomTrainTest:
             training_seed = butler.algorithms.get(key=self.training_seed_key)
             posttest_seed = butler.algorithms.get(key=self.posttest_seed_key)
 
-            # log file
-            log_fname = 'log.txt'
-            log_file = open(log_fname, 'a')
-            log_file.write('RandomTrainTest:\n')
-            log_file.write('pretest_seed: ' + str(pretest_seed) + '\n')
-            log_file.write('posttest_seed: ' + str(posttest_seed) + '\n')
-            log_file.close()
-
             # generate the questions for this participant and store them
-            participant_questions = []
-
-            pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
-            for i in range(pretest_count):
-                participant_questions.append(pretest_question_generator.generate_question())
-
-            training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
-            for i in range(training_count):
-                participant_questions.append(training_question_generator.generate_question())
-
-            posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
-            for i in range(posttest_count):
-                participant_questions.append(posttest_question_generator.generate_question())
-
-            num_reported_answers = 0
-            participant_info = ParticipantInfo.ParticipantInfo(questions=participant_questions, num_reported_answers=num_reported_answers)
+            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, pretest_seed, training_seed, posttest_seed,
+                                                                                          pretest_count, training_count, posttest_count)
 
             participant_info_dict[participant_uid] = participant_info
             butler.algorithms.set(key=self.participant_info_dict_key, value=participant_info_dict)
@@ -130,26 +105,16 @@ class RandomTrainTest:
             butler.algorithms.increment(key=self.training_seed_key)
             butler.algorithms.increment(key=self.posttest_seed_key)
 
-
         else:
             # get the participant information
             participant_info = butler.algorithms.get(key=self.participant_info_dict_key)[participant_uid]
-            participant_questions = participant_info.questions
-            num_reported_answers = participant_info.num_reported_answers
         # release the lock
         ques_gen_lock.release()
         
-        # decide which type of question to show and generate that type of question
-        if num_reported_answers < pretest_count:
-            ques_type = self.pretest_key
-        elif num_reported_answers >= pretest_count and num_reported_answers < pretest_count + training_count:
-            ques_type = self.training_key
-        elif num_reported_answers >= pretest_count + training_count:
-            ques_type = self.posttest_key
+        mol1, mol2, same, ques_type = participant_info.questions[participant_info.num_reported_answers]
 
-        mol1, mol2, same = participant_questions[num_reported_answers]
-
-        return [mol1, mol2, same, ques_type, num_reported_answers + 1, pretest_count + training_count + posttest_count]
+        return [mol1, mol2, same, ques_type, participant_info.num_reported_answers + 1, 
+                     pretest_count + training_count + posttest_count]
 
     def processAnswer(self,butler, participant_uid, target_winner):
         """
@@ -184,6 +149,48 @@ class RandomTrainTest:
 
         return True
 
-
     def getModel(self, butler):
         return True
+
+    def generate_all_questions(self, pretest_file, training_file, posttest_file, pretest_seed, training_seed, posttest_seed, pretest_count, 
+                                                  training_count, posttest_count):
+        """
+        generate all questions for a participant
+        :param pretest_file: string, the pretest file name
+        :param training_file: string, the training file name
+        :param posttest_file: string, the posttest file name
+        :param pretest_seed: int, the pretest seed
+        :param training_seed: int, the training seed
+        :param posttest_seed: int, the posttest seed
+        :param pretest_count: int, the number of pretest questions to generate
+        :param training_count: int, the number of training questions to generate
+        :param posttest_count: int, the number of posttest questions to generate
+        :return: ParticipantInfo: all questions generated for the participant put in a PariticipantInfo object
+        """
+        participant_questions = []
+
+        pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
+        for i in range(pretest_count):
+            # adding the question type
+            pretest_question = pretest_question_generator.generate_question()
+            pretest_question.append(parameters.pretest_key)
+            participant_questions.append(pretest_question)
+
+        training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
+        for i in range(training_count):
+            # adding the question type
+            training_question = training_question_generator.generate_question()
+            training_question.append(parameters.training_key)
+            participant_questions.append(training_question)
+
+        posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
+        for i in range(posttest_count):
+            # adding the question type
+            posttest_question = posttest_question_generator.generate_question()
+            posttest_question.append(parameters.posttest_key)
+            participant_questions.append(posttest_question)
+
+        num_reported_answers = 0
+        participant_info = ParticipantInfo.ParticipantInfo(questions=participant_questions, num_reported_answers=num_reported_answers)
+
+        return participant_info
