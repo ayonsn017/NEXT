@@ -39,6 +39,12 @@ getQuery:
       3:
         type: string
         description: pretest, training or posttest identifying which type of question it is
+      4:
+        type: num
+        description: question number to be shown to the participant
+      5:
+        type: num
+        description: total number of questions to be shown to the participant
         
       
 processAnswer:

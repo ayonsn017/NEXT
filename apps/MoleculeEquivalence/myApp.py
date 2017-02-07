@@ -55,6 +55,8 @@ class MyApp:
         mol2_index = 1
         same_index = 2
         ques_type_index = 3
+        ques_count_index = 4
+        total_ques_count_index = 5
 
         exp_uid = butler.exp_uid
         participant_uid = args['participant_uid'] # get the participant_uid to send to the front end
@@ -65,11 +67,14 @@ class MyApp:
         mol2  = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol2_index])
         same = alg_response[same_index]
         ques_type = alg_response[ques_type_index]
+        ques_count = alg_response[ques_count_index]
+        total_ques_count = alg_response[total_ques_count_index]
 
         mol1['label'] = 'mol1'
         mol2['label'] = 'mol2'
 
-        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid}
+        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid, 'ques_count': ques_count, 
+                     'total_ques_count': total_ques_count }
 
     def processAnswer(self, butler, alg, args):
                 

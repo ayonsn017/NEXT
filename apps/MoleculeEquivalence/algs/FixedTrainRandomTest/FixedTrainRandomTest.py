@@ -68,6 +68,8 @@ class FixedTrainRandomTest:
         :return [str, str, int, str]: [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same, ques_type], 
                     same is 1 if the two molecules are the same 0 otherwise
                     ques_type can currently be pretest, posttest or training
+                    ques_no is the question number to be displayed to the participant
+                    total_ques_count is the total number of questions to be displayed to the participant
         """
         """
         generate a question to be displayed to the participant
@@ -153,7 +155,7 @@ class FixedTrainRandomTest:
 
         mol1, mol2, same = participant_questions[num_reported_answers]
 
-        return [mol1, mol2, same, ques_type]
+        return [mol1, mol2, same, ques_type, num_reported_answers + 1, pretest_count + training_count + posttest_count]
 
     def processAnswer(self,butler, participant_uid, target_winner):
         """
