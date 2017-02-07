@@ -1,7 +1,7 @@
 import time
 import numpy.random
 import next.utils as utils
-from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, parameters, ParticipantInfo, instructions
+from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, parameters, ParticipantInfo, instructions, ParticipantQuestion
 import ast
 
 class RandomTrainTest:
@@ -111,10 +111,10 @@ class RandomTrainTest:
         # release the lock
         ques_gen_lock.release()
         
-        mol1, mol2, same, ques_type = participant_info.questions[participant_info.num_reported_answers]
+        participant_question = participant_info.questions[participant_info.num_reported_answers]
 
-        return [mol1, mol2, same, ques_type, participant_info.num_reported_answers + 1, 
-                     pretest_count + training_count + posttest_count]
+        return [participant_question.mol1, participant_question.mol2, participant_question.same, participant_question.ques_type, 
+                    participant_question.ques_count, pretest_count + training_count + posttest_count]
 
     def processAnswer(self,butler, participant_uid, target_winner):
         """
@@ -170,68 +170,60 @@ class RandomTrainTest:
         participant_questions = []
 
         # introduction instruction 1
-        mol1 = instructions.get_introduction_instruction1()
-        mol2 = ''
-        same = 0
-        ques_type = parameters.instruction_key
-        participant_questions.append([mol1, mol2, same, ques_type])
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction1(), '', 0, 
+                                                                                                                    parameters.instruction_key, 0)
+        participant_questions.append(participant_question)
 
         # introduction instruction 2
-        mol1 = instructions.get_introduction_instruction1()
-        mol2 = ''
-        same = 0
-        ques_type = parameters.instruction_key
-        participant_questions.append([mol1, mol2, same, ques_type])
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction2(), '', 0, 
+                                                                                                                    parameters.instruction_key, 0)
+        participant_questions.append(participant_question)
 
         # pretest instruction
-        mol1 = instructions.get_pretest_instruction()
-        mol2 = ''
-        same = 0
-        ques_type = parameters.instruction_key
-        participant_questions.append([mol1, mol2, same, ques_type])
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_pretest_instruction(), '', 0, 
+                                                                                                                    parameters.instruction_key, 0)
+        participant_questions.append(participant_question)
 
+        index = 1
         # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
         for i in range(pretest_count):
             # adding the question type
             pretest_question = pretest_question_generator.generate_question()
-            pretest_question.append(parameters.pretest_key)
-            participant_questions.append(pretest_question)
+            participant_question = ParticipantQuestion.ParticipantQuestion(pretest_question[0], pretest_question[1], pretest_question[2], 
+                                                                                                                        parameters.pretest_key, index)
+            index += 1
+            participant_questions.append(participant_question)
 
         # training instruction
-        mol1 = instructions.get_training_instruction()
-        mol2 = ''
-        same = 0
-        ques_type = parameters.instruction_key
-        participant_questions.append([mol1, mol2, same, ques_type])
-
-        #training instruction
-        mol1 = instructions.get_training_instruction()
-        mol2 = ''
-        same = 0
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_training_instruction(), '', 0, 
+                                                                                                                    parameters.instruction_key, 0)
+        participant_questions.append(participant_question)
 
         # training questions 
         training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
         for i in range(training_count):
             # adding the question type
             training_question = training_question_generator.generate_question()
-            training_question.append(parameters.training_key)
-            participant_questions.append(training_question)
+            participant_question = ParticipantQuestion.ParticipantQuestion(training_question[0], training_question[1], training_question[2], 
+                                                                                                                        parameters.training_key, index)
+            index += 1
+            participant_questions.append(participant_question)
 
         # posttest instruction
-        mol1 = instructions.get_posttest_instruction()
-        mol2 = ''
-        same = 0
-        ques_type = parameters.instruction_key
-        participant_questions.append([mol1, mol2, same, ques_type])
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_posttest_instruction(), '', 0, 
+                                                                                                                    parameters.instruction_key, 0)
+        participant_questions.append(participant_question)
 
         # posttest questions
         posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
         for i in range(posttest_count):
             # adding the question type
             posttest_question = posttest_question_generator.generate_question()
-            posttest_question.append(parameters.posttest_key)
-            participant_questions.append(posttest_question)
+            participant_question = ParticipantQuestion.ParticipantQuestion(posttest_question[0], posttest_question[1], posttest_question[2], 
+                                                                                                                        parameters.posttest_key, index)
+            index += 1
+            participant_questions.append(participant_question)
 
         num_reported_answers = 0
         participant_info = ParticipantInfo.ParticipantInfo(questions=participant_questions, num_reported_answers=num_reported_answers)
