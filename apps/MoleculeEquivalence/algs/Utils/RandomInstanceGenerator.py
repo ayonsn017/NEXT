@@ -17,7 +17,7 @@ class RandomInstanceGenerator:
 
     def generate_question(self):
         """
-        return an instance generated using the distribution
+        return a question generated using the distribution
         :return: [str, str, int], [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same], 
                     same is 1 if the two molecules are the same 0 otherwise
         """

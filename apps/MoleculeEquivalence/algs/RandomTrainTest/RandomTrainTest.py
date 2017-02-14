@@ -200,7 +200,6 @@ class RandomTrainTest:
         index = 1
         # guard question generator
         guard_question_generator = FixedInstanceReader.FixedInstanceReader(guard_file)
-        guard_index = 0;
 
         # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
@@ -214,11 +213,10 @@ class RandomTrainTest:
 
             # check if we should add guard questions
             if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question(guard_index)
+                guard_question = guard_question_generator.generate_question()
                 participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
                                                                                                                             parameters.guard_key, index)
                 index += 1
-                guard_index += 1
                 participant_questions.append(participant_question)
 
         # training instruction
@@ -238,11 +236,10 @@ class RandomTrainTest:
 
             # check if we should add guard questions
             if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question(guard_index)
+                guard_question = guard_question_generator.generate_question()
                 participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
                                                                                                                             parameters.guard_key, index)
                 index += 1
-                guard_index += 1
                 participant_questions.append(participant_question)
 
         # posttest instruction
@@ -262,11 +259,10 @@ class RandomTrainTest:
 
             # check if we should add guard questions
             if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question(guard_index)
+                guard_question = guard_question_generator.generate_question()
                 participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
                                                                                                                             parameters.guard_key, index)
                 index += 1
-                guard_index += 1
                 participant_questions.append(participant_question)
 
         num_reported_answers = 0
