@@ -1,6 +1,7 @@
 import numpy as np
+from apps.MoleculeEquivalence.algs.Utils import QuestionGenerator
 
-class RandomInstanceGenerator:
+class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
     probability_index = 5  # index in distribution list where the probability value is stored
     same_index = 4  # index in distribution list where the same variable is stored
     def __init__(self, input_fname, seed=-1):

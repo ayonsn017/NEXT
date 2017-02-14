@@ -1,7 +1,7 @@
 import time
 import numpy.random
 import next.utils as utils
-from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedInstanceReader, parameters, ParticipantInfo, instructions, ParticipantQuestion
+from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedInstanceReader, parameters, ParticipantInfo, instructions, ParticipantQuestion, utility
 import ast
 
 class FixedTrainRandomTest:
@@ -213,21 +213,9 @@ class FixedTrainRandomTest:
 
         # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
-        for i in range(pretest_count):
-            # adding the question type
-            pretest_question = pretest_question_generator.generate_question()
-            participant_question = ParticipantQuestion.ParticipantQuestion(pretest_question[0], pretest_question[1], pretest_question[2], 
-                                                                                                                        parameters.pretest_key, index)
-            index += 1
-            participant_questions.append(participant_question)
-
-            # check if we should add guard questions
-            if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question()
-                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
-                                                                                                                            parameters.guard_key, index)
-                index += 1
-                participant_questions.append(participant_question)
+        participant_questions, index = utility.gen_participant_questions(pretest_question_generator, guard_question_generator, 
+                                                                                                                     pretest_count, parameters.pretest_key, index, guard_gap, 
+                                                                                                                     participant_questions)
 
         # training instruction
         participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_training_instruction(), '', 0, 
@@ -236,21 +224,9 @@ class FixedTrainRandomTest:
 
         # training questions
         training_question_generator = FixedInstanceReader.FixedInstanceReader(training_file)
-        for i in range(training_count):
-            # adding the question type
-            training_question = training_question_generator.generate_question()
-            participant_question = ParticipantQuestion.ParticipantQuestion(training_question[0], training_question[1], 
-                                                                                                                        training_question[2], parameters.training_key, index)
-            index += 1
-            participant_questions.append(participant_question)
-
-            # check if we should add guard questions
-            if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question()
-                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
-                                                                                                                            parameters.guard_key, index)
-                index += 1
-                participant_questions.append(participant_question)
+        participant_questions, index = utility.gen_participant_questions(training_question_generator, guard_question_generator, 
+                                                                                                                     training_count, parameters.training_key, index, guard_gap, 
+                                                                                                                     participant_questions)
 
         # posttest instruction
         participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_posttest_instruction(), '', 0, 
@@ -259,21 +235,9 @@ class FixedTrainRandomTest:
 
         # posttest questions
         posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
-        for i in range(posttest_count):
-            # adding the question type
-            posttest_question = posttest_question_generator.generate_question()
-            participant_question = ParticipantQuestion.ParticipantQuestion(posttest_question[0], posttest_question[1], 
-                                                                                                                        posttest_question[2], parameters.posttest_key, index)
-            index += 1
-            participant_questions.append(participant_question)
-
-            # check if we should add guard questions
-            if index % (guard_gap + 1) == 0:
-                guard_question = guard_question_generator.generate_question()
-                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
-                                                                                                                            parameters.guard_key, index)
-                index += 1
-                participant_questions.append(participant_question)
+        participant_questions, index = utility.gen_participant_questions(posttest_question_generator, guard_question_generator, 
+                                                                                                                     posttest_count, parameters.posttest_key, index, guard_gap,
+                                                                                                                      participant_questions)
 
         num_reported_answers = 0
         participant_info = ParticipantInfo.ParticipantInfo(questions=participant_questions, num_reported_answers=num_reported_answers)

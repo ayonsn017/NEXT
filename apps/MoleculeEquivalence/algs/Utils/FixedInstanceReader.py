@@ -1,6 +1,7 @@
 import numpy as np
+from apps.MoleculeEquivalence.algs.Utils import QuestionGenerator
 
-class FixedInstanceReader:
+class FixedInstanceReader(QuestionGenerator.QuestionGenerator):
     def __init__(self, input_fname):
         """
         :param input_fname: the input file name which contains the questions
