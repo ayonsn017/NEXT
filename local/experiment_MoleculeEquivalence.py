@@ -8,11 +8,13 @@ target_file = 'data/01_X/mol_img_dict.json'
 pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
 training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
+guard_dataset_fname = './local/data/04_SampleDataset/guard_dataset.csv'
 posttest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 
 pretest_file_key = 'pretest_file'
 training_file_key = 'training_file'
 posttest_file_key = 'posttest_file'
+guard_file_key = 'guard_file'
 alg_id_key = 'alg_id'
 alg_label_key = 'alg_label'
 
@@ -30,6 +32,7 @@ alg_item[alg_label_key] = alg_ids[0]
 alg_item[pretest_file_key] = pretest_dist_fname
 alg_item[training_file_key] = training_dataset_fname
 alg_item[posttest_file_key] = posttest_dist_fname
+alg_item[guard_file_key] = guard_dataset_fname
 alg_list.append(alg_item)
 
 # parameters for RandomTrainTest
@@ -39,6 +42,7 @@ alg_item[alg_label_key] = alg_ids[1]
 alg_item[pretest_file_key] = pretest_dist_fname
 alg_item[training_file_key] = training_dist_fname
 alg_item[posttest_file_key] = posttest_dist_fname
+alg_item[guard_file_key] = guard_dataset_fname
 alg_list.append(alg_item)
 
 '''
@@ -76,6 +80,7 @@ initExp['args'] = {}
 initExp['args']['pretest_count'] = 2
 initExp['args']['training_count'] = 6
 initExp['args']['posttest_count'] = 4
+initExp['args']['guard_gap'] = 5
 initExp['args']['participant_to_algorithm_management'] = 'one_to_one'  # assign one participant to one condition only
 initExp['args']['algorithm_management_settings'] = algorithm_management_settings 
 initExp['args']['alg_list'] = alg_list 

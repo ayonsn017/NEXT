@@ -1,0 +1,7 @@
+molecule1,representation1,molecule2,representation2,same
+BeCl2,Lewis,BeCl2,SF,1
+H2,SF,O2,Lewis,0
+BeCl2,Lewis,BeCl2,SF,1
+H2,SF,O2,Lewis,0
+BeCl2,Lewis,BeCl2,SF,1
+H2,SF,O2,Lewis,0

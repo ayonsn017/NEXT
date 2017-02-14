@@ -6,6 +6,7 @@ pretest_key = 'pretest'  # this is used as ques_type for pretest questions for t
 training_key = 'training'  # this is used as ques_type for pretest questions for the widget
 posttest_key = 'posttest'  # this is used as ques_type for pretest questions for the widget
 instruction_key = 'instruction'  # this is used as ques_type for instruction questions for the widget
+guard_key = 'guard'
 
 ques_gen_lock_name = 'ques_gen_lock'  # the name of the lock to be used for question generation
 

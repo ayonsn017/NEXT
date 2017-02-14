@@ -28,9 +28,10 @@ class MyApp:
         args['n'] = n
         del args['targets']
 
-        # get the pretest, training and posttest questions count and forward them to the algorithms
+        # get the pretest, training and posttest questions count along with the gap between guard questions
+        #forward them to the algorithms
         alg_data = {}
-        algorithm_keys = ['pretest_count', 'training_count', 'posttest_count']
+        algorithm_keys = ['pretest_count', 'training_count', 'posttest_count', 'guard_gap']
         for key in algorithm_keys:
             if key in args:
                 alg_data[key]=args[key]
@@ -39,6 +40,9 @@ class MyApp:
         num_tries = args['pretest_count']
         num_tries += args['training_count']
         num_tries += args['posttest_count']
+
+        guard_count = num_tries/args['guard_gap']
+        num_tries += guard_count
 
         num_tries += parameters.introduction_instructions_count
         num_tries += parameters.pretest_instructions_count

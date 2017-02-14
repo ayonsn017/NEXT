@@ -1,0 +1,3 @@
+molecule1,representation1,molecule2,representation2,same
+H2,Lewis,O2,Lewis,0
+O2,SF,O2,SF,1

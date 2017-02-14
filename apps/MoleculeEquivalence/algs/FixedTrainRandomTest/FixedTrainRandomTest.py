@@ -8,6 +8,7 @@ class FixedTrainRandomTest:
     pretest_count_key = 'pretest_count'
     training_count_key = 'training_count'
     posttest_count_key = 'posttest_count'
+    guard_gap_key = 'guard_gap'
     num_reported_answers_key = 'num_reported_answers'
     pretest_key = 'pretest'
     training_key = 'training'
@@ -15,6 +16,7 @@ class FixedTrainRandomTest:
     pretest_file_key = 'pretest_file'
     training_file_key = 'training_file'
     posttest_file_key = 'posttest_file'
+    guard_file_key = 'guard_file'
     pretest_generator_key = 'pretest_generator'
     training_generator_key = 'training_generator'
     posttest_generator_key = 'posttest_generator'
@@ -22,20 +24,22 @@ class FixedTrainRandomTest:
     posttest_seed_key = 'posttest_seed'
     participant_info_dict_key = 'participant_info_dict'
     alg_label_key = 'alg_label'
-    def initExp(self,butler, pretest_count, training_count, posttest_count, alg_list):
+    def initExp(self,butler, pretest_count, training_count, posttest_count, guard_gap, alg_list):
         """
         :param butler: Butler, the butler
         :param pretest_count: int, the number of pretest questions to show
         :param training_count: int, the number of training questions to show
         :param posttest_count: int, the number of posttest questions to show
+        :param guard_gap: int, gap between guard questions
         :param alg_list: list[dict], a list containing parameters that vary across algorithms
                                  for this algorithm we need pretest, training and posttest files that contain the pretest, training and posttest 
                                  distribution respectively
         :return bool: True to indicate that algorithm initialization was a success
         """
-        butler.algorithms.set(key='pretest_count', value=pretest_count)
-        butler.algorithms.set(key='training_count', value=training_count)
-        butler.algorithms.set(key='posttest_count', value=posttest_count)
+        butler.algorithms.set(key=self.pretest_count_key, value=pretest_count)
+        butler.algorithms.set(key=self.training_count_key, value=training_count)
+        butler.algorithms.set(key=self.posttest_count_key, value=posttest_count)
+        butler.algorithms.set(key=self.guard_gap_key, value=guard_gap)
         butler.algorithms.set(key='num_reported_answers', value=0)  # the number of total questions answered for this algorithm
         # dictionary to store the information for a participant
         butler.algorithms.set(key=self.participant_info_dict_key, value={})
@@ -48,10 +52,11 @@ class FixedTrainRandomTest:
             if alg_desc[self.alg_label_key] == butler.alg_label:
                 alg_params = alg_desc
 
-        # save the pretest, training and posttest files
+        # save the pretest, training, posttest and guard files
         butler.algorithms.set(key=self.pretest_file_key, value=alg_params[self.pretest_file_key])
         butler.algorithms.set(key=self.training_file_key, value=alg_params[self.training_file_key])
         butler.algorithms.set(key=self.posttest_file_key, value=alg_params[self.posttest_file_key])
+        butler.algorithms.set(key=self.guard_file_key, value=alg_params[self.guard_file_key])
 
         # save the initial seeds
         butler.algorithms.set(key=self.pretest_seed_key, value=parameters.pretest_seed)
@@ -83,6 +88,11 @@ class FixedTrainRandomTest:
         pretest_count = butler.algorithms.get(key=self.pretest_count_key)
         training_count = butler.algorithms.get(key=self.training_count_key)
         posttest_count = butler.algorithms.get(key=self.posttest_count_key)
+        guard_gap = butler.algorithms.get(key=self.guard_gap_key)
+
+        # count total number of questions to show
+        guard_count = (pretest_count + training_count + posttest_count) / guard_gap
+        total_questions = pretest_count + training_count + posttest_count + guard_count
 
         # acquire the question generation lock
         ques_gen_lock = butler.memory.lock(parameters.ques_gen_lock_name)
@@ -98,14 +108,15 @@ class FixedTrainRandomTest:
             pretest_file = butler.algorithms.get(key=self.pretest_file_key)
             training_file = butler.algorithms.get(key=self.training_file_key)
             posttest_file = butler.algorithms.get(key=self.posttest_file_key)
+            guard_file = butler.algorithms.get(key=self.guard_file_key)
 
             # get the seed for this participant and generate the questions
             pretest_seed = butler.algorithms.get(key=self.pretest_seed_key)
             posttest_seed = butler.algorithms.get(key=self.posttest_seed_key)
 
             # generate the questions for this participant and store them
-            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, pretest_seed, posttest_seed, pretest_count, 
-                                                                                          training_count, posttest_count)            
+            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file, pretest_seed, posttest_seed, 
+                                                                                          pretest_count, training_count, posttest_count, guard_gap)            
 
             participant_info_dict[participant_uid] = participant_info
             butler.algorithms.set(key=self.participant_info_dict_key, value=participant_info_dict)
@@ -124,7 +135,7 @@ class FixedTrainRandomTest:
         participant_question = participant_info.questions[participant_info.num_reported_answers]
 
         return [participant_question.mol1, participant_question.mol2, participant_question.same, participant_question.ques_type, 
-                    participant_question.ques_count, pretest_count + training_count + posttest_count]
+                    participant_question.ques_count, total_questions]
 
     def processAnswer(self,butler, participant_uid, target_winner):
         """
@@ -163,18 +174,20 @@ class FixedTrainRandomTest:
     def getModel(self, butler):
         return True
 
-    def generate_all_questions(self, pretest_file, training_file, posttest_file, pretest_seed, posttest_seed, pretest_count, 
-                                                  training_count, posttest_count):
+    def generate_all_questions(self, pretest_file, training_file, posttest_file, guard_file, pretest_seed, posttest_seed, pretest_count, 
+                                                  training_count, posttest_count, guard_gap):
         """
         generate all questions for a participant
         :param pretest_file: string, the pretest file name
         :param training_file: string, the training file name
         :param posttest_file: string, the posttest file name
+        :param guard_file: string, the guard file name
         :param pretest_seed: int, the pretest seed
         :param posttest_seed: int, the posttest seed
         :param pretest_count: int, the number of pretest questions to generate
         :param training_count: int, the number of training questions to generate
         :param posttest_count: int, the number of posttest questions to generate
+        :param guard_gap: int, the gap between guard questions
         :return: ParticipantInfo: all questions generated for the participant put in a PariticipantInfo object
         """
         participant_questions = []
@@ -195,6 +208,10 @@ class FixedTrainRandomTest:
         participant_questions.append(participant_question)
 
         index = 1
+        # guard question generator
+        guard_question_generator = FixedInstanceReader.FixedInstanceReader(guard_file)
+        guard_index = 0;
+
         # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
         for i in range(pretest_count):
@@ -204,6 +221,15 @@ class FixedTrainRandomTest:
                                                                                                                         parameters.pretest_key, index)
             index += 1
             participant_questions.append(participant_question)
+
+            # check if we should add guard questions
+            if index % (guard_gap + 1) == 0:
+                guard_question = guard_question_generator.generate_question(guard_index)
+                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
+                                                                                                                            parameters.guard_key, index)
+                index += 1
+                guard_index += 1
+                participant_questions.append(participant_question)
 
         # training instruction
         participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_training_instruction(), '', 0, 
@@ -220,6 +246,15 @@ class FixedTrainRandomTest:
             index += 1
             participant_questions.append(participant_question)
 
+            # check if we should add guard questions
+            if index % (guard_gap + 1) == 0:
+                guard_question = guard_question_generator.generate_question(guard_index)
+                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
+                                                                                                                            parameters.guard_key, index)
+                index += 1
+                guard_index += 1
+                participant_questions.append(participant_question)
+
         # posttest instruction
         participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_posttest_instruction(), '', 0, 
                                                                                                                     parameters.instruction_key, 0)
@@ -234,6 +269,15 @@ class FixedTrainRandomTest:
                                                                                                                         posttest_question[2], parameters.posttest_key, index)
             index += 1
             participant_questions.append(participant_question)
+
+            # check if we should add guard questions
+            if index % (guard_gap + 1) == 0:
+                guard_question = guard_question_generator.generate_question(guard_index)
+                participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
+                                                                                                                            parameters.guard_key, index)
+                index += 1
+                guard_index += 1
+                participant_questions.append(participant_question)
 
         num_reported_answers = 0
         participant_info = ParticipantInfo.ParticipantInfo(questions=participant_questions, num_reported_answers=num_reported_answers)

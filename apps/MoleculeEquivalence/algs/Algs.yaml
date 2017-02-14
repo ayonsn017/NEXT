@@ -9,8 +9,11 @@ initExp:
     posttest_count:
       description: Number of posttest questions to show to the participant.
       type: num
+    guard_gap:
+      description: Gap between guard questions
+      type: num
     alg_list:
-      description: A tuple of dictionaries containing information regarding all the algorithms
+      description: A tuple of dictionaries in string format containing information regarding all the algorithms
       type: str
   rets:
     type: bool
