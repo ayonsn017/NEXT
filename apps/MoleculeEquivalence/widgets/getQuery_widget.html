@@ -121,15 +121,21 @@ div.instruction_box{
         {% if query.ques_type == "training" %}
         <!-- provide feedback -->
         &nbsp;
-        <button id="Yes" type="button" onclick="respond(this.id);">Yes</button>
-        <button id="No" type="button" onclick="respond(this.id);">No</button>
-
+        <form>
+            <input type="radio" name="participant_training_answer" id ="participant_training_answer_yes" value="Yes"> Yes<br>
+            <input type="radio" name="participant_training_answer" id ="participant_training_answer_no" value="No"> No<br>
+        </form>
+        <button id="feedback_submit" type="button" onclick="feedback_respond();" class="btn btn-danger" style="float: right;">Submit</button>
 
         {% else %}
         <!-- no feedback -->
         &nbsp;
-        <button type="button" onclick="submit_yes()">Yes</button>
-        <button type="button" onclick="submit_no()">No</button>
+        <form>
+            <input type="radio" name="participant_answer" id ="participant_answer_yes" value="Yes"> Yes<br>
+            <input type="radio" name="participant_answer" id ="participant_answer_no" value="No"> No<br>
+        </form>
+        <button type="button" onclick="submit();" class="btn btn-danger" style="float: right;">Submit</button>
+
         {% endif %}
     </div>
     </div>
@@ -140,6 +146,11 @@ div.instruction_box{
         <button type="button" id="proceeed_btn" class="btn btn-danger"
                         onclick="submit_response()" style="float: right;">Proceed</button>
     </div>
+    <!-- Must answer div -->
+    <div class="feedback_box" id="must_answer_div">
+        <h2 >You must select either Yes or No to proceed. </h2>
+    </div>
+
 {% endif %}
 
 <script>
@@ -152,8 +163,9 @@ var respond = function(label){
     console.log('setting response variable')       
 
     // Disable buttons during feedback
-    document.getElementById("Yes").disabled = true; 
-    document.getElementById("No").disabled = true; 
+    document.getElementById("participant_training_answer_yes").disabled = true; 
+    document.getElementById("participant_training_answer_no").disabled = true;
+    document.getElementById("feedback_submit").style.visibility = "hidden"; 
 
     // Display modal with feedback
     response = (label === "Yes");
@@ -232,6 +244,34 @@ var submit_yes = function() {
 var submit_no = function() {
     console.log('Submitting no');
     next_widget.processAnswer({'target_winner': false, 'participant_uid': "{{ query.participant_uid }}"});
+}
+
+var submit = function() {
+    if(document.getElementById('participant_answer_yes').checked) {
+        submit_yes();
+    }
+    else if(document.getElementById('participant_answer_no').checked) {
+        submit_no();
+    }
+    else {
+        // Show feedback div
+        $('#must_answer_div').css('display','block'); 
+    }
+}
+
+var feedback_respond = function() {
+    if(document.getElementById('participant_training_answer_yes').checked) {
+        $('#must_answer_div').css('display','none');
+        respond("Yes");
+    }
+    else if(document.getElementById('participant_training_answer_no').checked) {
+        $('#must_answer_div').css('display','none');
+        respond("No");
+    }
+    else {
+        // Show feedback div
+        $('#must_answer_div').css('display','block'); 
+    }  
 }
 
 </script>
