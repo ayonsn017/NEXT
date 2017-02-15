@@ -17,6 +17,8 @@ posttest_file_key = 'posttest_file'
 guard_file_key = 'guard_file'
 alg_id_key = 'alg_id'
 alg_label_key = 'alg_label'
+time_required_key = 'time_required'
+monetary_gain_key = 'monetary_gain'
 
 experiment_list = []
 alg_ids = ['FixedTrainRandomTest','RandomTrainTest']
@@ -33,6 +35,8 @@ alg_item[pretest_file_key] = pretest_dist_fname
 alg_item[training_file_key] = training_dataset_fname
 alg_item[posttest_file_key] = posttest_dist_fname
 alg_item[guard_file_key] = guard_dataset_fname
+alg_item[time_required_key] = '5-10'
+alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
 alg_list.append(alg_item)
 
 # parameters for RandomTrainTest
@@ -43,6 +47,8 @@ alg_item[pretest_file_key] = pretest_dist_fname
 alg_item[training_file_key] = training_dist_fname
 alg_item[posttest_file_key] = posttest_dist_fname
 alg_item[guard_file_key] = guard_dataset_fname
+alg_item[time_required_key] = '5-10'
+alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
 alg_list.append(alg_item)
 
 '''

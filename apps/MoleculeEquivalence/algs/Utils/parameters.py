@@ -10,8 +10,27 @@ guard_key = 'guard'
 
 ques_gen_lock_name = 'ques_gen_lock'  # the name of the lock to be used for question generation
 
+# instruction question counts
 introduction_instructions_count = 2
 pretest_instructions_count = 1
 training_instructions_count = 1
 posttest_instructions_count = 1
+
+# keys common across algorithms
+pretest_count_key = 'pretest_count'
+training_count_key = 'training_count'
+posttest_count_key = 'posttest_count'
+guard_gap_key = 'guard_gap'
+num_reported_answers_key = 'num_reported_answers'
+pretest_seed_key = 'pretest_seed'
+training_seed_key = 'training_seed'
+posttest_seed_key = 'posttest_seed'
+participant_info_dict_key = 'participant_info_dict'
+alg_label_key = 'alg_label'
+monetary_gain_key = 'monetary_gain'
+pretest_file_key = 'pretest_file'
+training_file_key = 'training_file'
+posttest_file_key = 'posttest_file'
+guard_file_key = 'guard_file'
+time_required_key = 'time_required'
 

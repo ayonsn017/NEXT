@@ -24,6 +24,12 @@ initExp:
               guard_file: 
                 description: A guard file name which contains the list of guard questions to show  
                 type: str
+              time_required:
+                description: Estimated time required to complete the survey, will be shown in introduction
+                type: str
+              monetary_gain:
+                description: Monetary gain for the participants, will be shown in introduction
+                type: str
         instructions:
           default: Please select, using your mouse or left and right arrow keys, the item on the bottom that is closest to the top.
           optional: true
