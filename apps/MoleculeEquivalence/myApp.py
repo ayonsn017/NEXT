@@ -89,7 +89,7 @@ class MyApp:
         ques_count = alg_response[ques_count_index]
         total_ques_count = alg_response[total_ques_count_index]
 
-        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'participant_uid': participant_uid, 'ques_count': ques_count, 
+        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'ques_count': ques_count, 
                      'total_ques_count': total_ques_count }
 
     def processAnswer(self, butler, alg, args):
