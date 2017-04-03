@@ -1,0 +1,8 @@
+Molecule1,Representation1,Molecule2,Representation2,Same
+HCN,SF,HCN,SF,1
+C2H4,Lewis,C2H4,Lewis,1
+HCl,SF,HCl,SF,1
+KCl,Lewis,C2,Lewis,0
+CaS,Lewis,HCl,Lewis,0
+N2F2,SF,N2F2,SF,1
+LiCl,Lewis,LiCl,Lewis,1
