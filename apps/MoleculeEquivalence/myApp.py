@@ -19,7 +19,7 @@ class MyApp:
 
     def initExp(self, butler, init_algs, args):
         exp_uid = butler.exp_uid
-        
+
         if 'targetset' in args['targets'].keys():
             n  = len(args['targets']['targetset'])
             self.TargetManager.set_targetset(exp_uid, args['targets']['targetset'])
@@ -34,20 +34,15 @@ class MyApp:
         algorithm_keys = ['pretest_count', 'training_count', 'posttest_count', 'guard_gap']
         for key in algorithm_keys:
             if key in args:
-                alg_data[key]=args[key]
+                alg_data[key] = args[key]
 
         # calculate the number of questions to show
-        num_tries = args['pretest_count']
-        num_tries += args['training_count']
-        num_tries += args['posttest_count']
+        num_tries = args['pretest_count'] + args['training_count'] + args['posttest_count']
 
-        guard_count = num_tries/args['guard_gap']
-        num_tries += guard_count
-
-        num_tries += parameters.introduction_instructions_count
-        num_tries += parameters.pretest_instructions_count
-        num_tries += parameters.training_instructions_count
-        num_tries += parameters.posttest_instructions_count
+        guard_count = num_tries / args['guard_gap']
+        num_tries = num_tries + guard_count + parameters.introduction_instructions_count + \
+            parameters.pretest_instructions_count + parameters.training_instructions_count + \
+            parameters.posttest_instructions_count
 
         args['num_tries'] = num_tries
 
@@ -70,7 +65,7 @@ class MyApp:
 
         exp_uid = butler.exp_uid
         participant_uid = args['participant_uid'] # get the participant_uid to send to the front end
-        
+
         alg_response = alg({'participant_uid':participant_uid}) # get a specific question for this participant
 
         ques_type = alg_response[ques_type_index]
@@ -85,15 +80,15 @@ class MyApp:
             mol2['label'] = 'mol2'
 
         same = alg_response[same_index]
-        
+
         ques_count = alg_response[ques_count_index]
         total_ques_count = alg_response[total_ques_count_index]
 
-        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'ques_count': ques_count, 
+        return {'target_indices':[mol1, mol2], 'same': same, 'ques_type': ques_type, 'ques_count': ques_count,
                      'total_ques_count': total_ques_count }
 
     def processAnswer(self, butler, alg, args):
-                
+
         query = butler.queries.get(uid=args['query_uid'])
 
         target_winner = args['target_winner']
@@ -101,11 +96,11 @@ class MyApp:
         # make a getModel call ~ every n/4 queries - note that this query will NOT be included in the predict
         experiment = butler.experiment.get()
         num_reported_answers = butler.experiment.increment(key='num_reported_answers_for_' + query['alg_label'])
-        
+
 
         # this is a call to the algorithm processAnswer method
         alg({'target_winner':target_winner, 'participant_uid':participant_uid})
-        
+
         q= [0, 1, 2]
 
         return {'target_winner':target_winner, 'q':q}
@@ -152,8 +147,3 @@ class MyApp:
         assign_alg_lock.release()
 
         return chosen_alg
-
-
-
-
-

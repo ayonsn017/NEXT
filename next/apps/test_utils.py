@@ -53,11 +53,11 @@ def processAnswer(processAnswer_args_dict, assert_200=True, verbose=False):
     if verbose:
         print "POST processAnswer response", response.text, response.status_code
     if assert_200: assert response.status_code is 200
-
     if verbose:
         print "POST processAnswer duration = ", dt
         print
     processAnswer_json_response = eval(response.text)
+    
     return processAnswer_json_response, dt
 
 def timeit(f):
