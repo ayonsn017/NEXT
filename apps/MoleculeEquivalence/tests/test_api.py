@@ -149,7 +149,7 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     print os.getcwd()
 
     # path to files
-    target_file = '../../../local/data/01_X/mol_img_dict.json'
+    target_file = './local/data/01_X/mol_img_dict.json'
     pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
     training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
     training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
