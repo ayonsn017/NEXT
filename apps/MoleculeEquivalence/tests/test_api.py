@@ -139,7 +139,7 @@ def import_experiment_list(file):
     return experiment_list
 
 
-def test_api(assert_200=True, num_experiments=1, num_clients=8):
+def test_api(assert_200=True, num_experiments=1, num_clients=80):
     """
     method to test the app
     :param assert_200: boolean, default value True
@@ -149,7 +149,7 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     print os.getcwd()
 
     # path to files
-    target_file = './local/data/01_X/mol_img_dict.json'
+    target_file = '../../../local/data/01_X/mol_img_dict.json'
     pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
     training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
     training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
@@ -167,9 +167,9 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     monetary_gain_key = 'monetary_gain'
 
     # question count variables
-    pretest_count = 2
-    training_count = 6
-    posttest_count = 4
+    pretest_count = 30
+    training_count = 60
+    posttest_count = 30
     guard_gap = 5
 
     pool = Pool(processes=num_clients)
@@ -316,7 +316,7 @@ def simulate_one_client(input_args):
         index_left = molecules[0]
         index_right = molecules[1]
 
-        ts = test_utils.response_delay()
+        ts = test_utils.response_delay(mean=0.5, std=1.)
         # sleep for a bit to simulate response time
 
         if ques_type == 'instruction':
