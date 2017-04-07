@@ -3,6 +3,7 @@ import next.utils as utils
 import next.apps.AltDescTargetManager
 from apps.MoleculeEquivalence.algs.Utils import parameters
 
+
 class MyApp:
     alg_list_key = 'alg_list'
     alg_label_key = 'alg_label'
@@ -39,7 +40,8 @@ class MyApp:
         # calculate the number of questions to show
         num_tries = args['pretest_count'] + args['training_count'] + args['posttest_count']
 
-        guard_count = num_tries / args['guard_gap']
+        # calculate
+        guard_count = num_tries // args['guard_gap']
         num_tries = num_tries + guard_count + parameters.introduction_instructions_count + \
             parameters.pretest_instructions_count + parameters.training_instructions_count + \
             parameters.posttest_instructions_count
@@ -99,11 +101,9 @@ class MyApp:
 
 
         # this is a call to the algorithm processAnswer method
-        alg({'target_winner':target_winner, 'participant_uid':participant_uid})
+        alg({'target_winner': target_winner, 'participant_uid': participant_uid})
 
-        q= [0, 1, 2]
-
-        return {'target_winner':target_winner, 'q':q}
+        return {'target_winner': target_winner, 'participant_uid': participant_uid}
 
     def getModel(self, butler, alg, args):
         return alg()
