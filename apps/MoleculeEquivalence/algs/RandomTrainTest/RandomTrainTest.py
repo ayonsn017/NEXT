@@ -4,9 +4,14 @@ import next.utils as utils
 from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedInstanceReader, parameters, ParticipantInfo, instructions, ParticipantQuestion, utility
 import ast
 
+
 class RandomTrainTest:
-    
-    def initExp(self,butler, pretest_count, training_count, posttest_count, guard_gap, alg_list):
+    """class to present questions generated at random from both the training and test distribution"""
+
+    increment_dictionary = {parameters.pretest_seed_key: 1, parameters.training_seed_key: 1,
+                            parameters.posttest_seed_key: 1}
+
+    def initExp(self, butler, pretest_count, training_count, posttest_count, guard_gap, alg_list):
         """
         :param butler: Butler, the butler
         :param pretest_count: int, the number of pretest questions to show
@@ -14,7 +19,7 @@ class RandomTrainTest:
         :param posttest_count: int, the number of posttest questions to show
         :param guard_gap: int, the gap between guard questions
         :param alg_list: list[dict], a list containing parameters that vary across algorithms
-                                 for this algorithm we need pretest, training and posttest files that contain the pretest, training and posttest 
+                                 for this algorithm we need pretest, training and posttest files that contain the pretest, training and posttest
                                  distribution respectively
         :return bool: True to indicate that algorithm initialization was a success
         """
@@ -49,14 +54,13 @@ class RandomTrainTest:
 
         return True
 
-
     def getQuery(self, butler, participant_uid):
         """
         generate a question to be displayed to the participant
         :param butler: Butler, the butler
         :participant_uid: str, a unique identifier for the participant
-        :return [str, str, int, str]: [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same, ques_type, ques_no, 
-                     total_ques_count], 
+        :return [str, str, int, str]: [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same, ques_type, ques_no,
+                     total_ques_count],
                     same is 1 if the two molecules are the same 0 otherwise
                     ques_type can currently be pretest, posttest or training
                     ques_no is the question number to be displayed to the participant
@@ -72,10 +76,6 @@ class RandomTrainTest:
         guard_count = (pretest_count + training_count + posttest_count) / guard_gap
         total_questions = pretest_count + training_count + posttest_count + guard_count
 
-        # acquire the question generation lock
-        ques_gen_lock = butler.memory.lock(parameters.ques_gen_lock_name)
-        ques_gen_lock.acquire()
-
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or posttest based on this value
         participant_info_dict = butler.algorithms.get(key=parameters.participant_info_dict_key)
@@ -90,36 +90,36 @@ class RandomTrainTest:
             time_required = butler.algorithms.get(key=parameters.time_required_key)
             monetary_gain = butler.algorithms.get(key=parameters.monetary_gain_key)
 
-            # get the seed for this participant and generate the questions
-            pretest_seed = butler.algorithms.get(key=parameters.pretest_seed_key)
-            training_seed = butler.algorithms.get(key=parameters.training_seed_key)
-            posttest_seed = butler.algorithms.get(key=parameters.posttest_seed_key)
+            # increment and get the seeds for this participant
+            seed_dict = butler.algorithms.increment_many(key_value_dict=self.increment_dictionary)
+            pretest_seed = seed_dict[parameters.pretest_seed_key]
+            training_seed = seed_dict[parameters.training_seed_key]
+            posttest_seed = seed_dict[parameters.posttest_seed_key]
 
             # generate the questions for this participant and store them
-            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file, pretest_seed, training_seed, posttest_seed,
-                                                                                          pretest_count, training_count, posttest_count, guard_gap, time_required, 
-                                                                                          monetary_gain)
+            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file,
+                                                           pretest_seed, training_seed, posttest_seed,
+                                                           pretest_count, training_count, posttest_count, guard_gap,
+                                                           time_required, monetary_gain)
 
             participant_info_dict[participant_uid] = participant_info
             butler.algorithms.set(key=parameters.participant_info_dict_key, value=participant_info_dict)
 
-            # increment the seed values
-            butler.algorithms.increment(key=parameters.pretest_seed_key)
-            butler.algorithms.increment(key=parameters.training_seed_key)
-            butler.algorithms.increment(key=parameters.posttest_seed_key)
-
+            # have a separate num reported answers entry in butler
+            num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
+            num_reported_answers = 0
+            butler.algorithms.set(key=num_reported_answers_key, value=num_reported_answers)
         else:
             # get the participant information
             participant_info = butler.algorithms.get(key=parameters.participant_info_dict_key)[participant_uid]
-        # release the lock
-        ques_gen_lock.release()
-        
-        participant_question = participant_info.questions[participant_info.num_reported_answers]
+            num_reported_answers = butler.algorithms.get(key=utility.gen_num_reported_answers_key(participant_uid))
 
-        return [participant_question.mol1, participant_question.mol2, participant_question.same, participant_question.ques_type, 
-                    participant_question.ques_count, total_questions]
+        participant_question = participant_info.questions[num_reported_answers]
 
-    def processAnswer(self,butler, participant_uid, target_winner):
+        return [participant_question.mol1, participant_question.mol2, participant_question.same,
+                participant_question.ques_type, participant_question.ques_count, total_questions]
+
+    def processAnswer(self, butler, participant_uid, target_winner):
         """
         :param butler: Butler, the butler
         :participant_uid: str, a unique identifier for the participant
@@ -128,6 +128,7 @@ class RandomTrainTest:
         butler.algorithms.increment(key=parameters.num_reported_answers_key)
 
         # get the question counts
+        # TODO:save the total question count and not calculate repeatedly
         pretest_count = butler.algorithms.get(key=parameters.pretest_count_key)
         training_count = butler.algorithms.get(key=parameters.training_count_key)
         posttest_count = butler.algorithms.get(key=parameters.posttest_count_key)
@@ -137,27 +138,14 @@ class RandomTrainTest:
         total_questions = total_questions + (total_questions) / guard_gap
 
         # increment the number of questions the participant has viewed
-        num_reported_answers_increment_lock = butler.memory.lock('num_reported_answers_increment_lock')
-        num_reported_answers_increment_lock.acquire()
-        participant_info_dict = butler.algorithms.get(key=parameters.participant_info_dict_key)
-        participant_info = participant_info_dict[participant_uid]
-        num_reported_answers = participant_info.increment_num_reported_answers()
-
-        # if participant has answered all questions then delete information related to him/her
-        if num_reported_answers == total_questions:
-            participant_info_dict.pop(participant_uid, 'None')
-        else:
-            participant_info_dict[participant_uid] = participant_info
-        # need this set step, otherwise butler values are not updated
-        butler.algorithms.set(key=parameters.participant_info_dict_key, value=participant_info_dict)   
-        num_reported_answers_increment_lock.release()
+        butler.algorithms.increment(key=utility.gen_num_reported_answers_key(participant_uid))
 
         return True
 
     def getModel(self, butler):
         return True
 
-    def generate_all_questions(self, pretest_file, training_file, posttest_file, guard_file, pretest_seed, training_seed, posttest_seed, 
+    def generate_all_questions(self, pretest_file, training_file, posttest_file, guard_file, pretest_seed, training_seed, posttest_seed,
                                                   pretest_count, training_count, posttest_count, guard_gap, time_required, monetary_gain):
         """
         generate all questions for a participant
@@ -179,21 +167,21 @@ class RandomTrainTest:
         participant_questions = []
 
         # introduction instruction 1
-        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction1(monetary_gain), '', 0, 
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction1(monetary_gain), '', 0,
                                                                                                                     parameters.instruction_key, 0)
         participant_questions.append(participant_question)
 
         # introduction instruction 2
-        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction2(pretest_count, 
-                                                                                                                                                                                            training_count, 
-                                                                                                                                                                                            posttest_count, 
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_introduction_instruction2(pretest_count,
+                                                                                                                                                                                            training_count,
+                                                                                                                                                                                            posttest_count,
                                                                                                                                                                                             guard_gap,
-                                                                                                                                                                                            time_required), '', 0, 
+                                                                                                                                                                                            time_required), '', 0,
                                                                                                                     parameters.instruction_key, 0)
         participant_questions.append(participant_question)
 
         # pretest instruction
-        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_pretest_instruction(), '', 0, 
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_pretest_instruction(), '', 0,
                                                                                                                     parameters.instruction_key, 0)
         participant_questions.append(participant_question)
 
@@ -203,29 +191,29 @@ class RandomTrainTest:
 
         # pretest questions
         pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
-        participant_questions, index = utility.gen_participant_questions(pretest_question_generator, guard_question_generator, 
-                                                                                                                     pretest_count, parameters.pretest_key, index, guard_gap, 
+        participant_questions, index = utility.gen_participant_questions(pretest_question_generator, guard_question_generator,
+                                                                                                                     pretest_count, parameters.pretest_key, index, guard_gap,
                                                                                                                      participant_questions)
 
         # training instruction
-        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_training_instruction(), '', 0, 
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_training_instruction(), '', 0,
                                                                                                                     parameters.instruction_key, 0)
         participant_questions.append(participant_question)
 
-        # training questions 
+        # training questions
         training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
-        participant_questions, index = utility.gen_participant_questions(training_question_generator, guard_question_generator, 
-                                                                                                                     training_count, parameters.training_key, index, guard_gap, 
+        participant_questions, index = utility.gen_participant_questions(training_question_generator, guard_question_generator,
+                                                                                                                     training_count, parameters.training_key, index, guard_gap,
                                                                                                                      participant_questions)
 
         # posttest instruction
-        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_posttest_instruction(), '', 0, 
+        participant_question = ParticipantQuestion.ParticipantQuestion(instructions.get_posttest_instruction(), '', 0,
                                                                                                                     parameters.instruction_key, 0)
         participant_questions.append(participant_question)
 
         # posttest questions
         posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
-        participant_questions, index = utility.gen_participant_questions(posttest_question_generator, guard_question_generator, 
+        participant_questions, index = utility.gen_participant_questions(posttest_question_generator, guard_question_generator,
                                                                                                                      posttest_count, parameters.posttest_key, index, guard_gap,
                                                                                                                       participant_questions)
 

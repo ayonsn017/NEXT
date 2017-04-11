@@ -4,7 +4,13 @@ import next.utils as utils
 from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedInstanceReader, parameters, ParticipantInfo, instructions, ParticipantQuestion, utility
 import ast
 
+
 class FixedTrainRandomTest:
+    """
+    class to present fixed training questions and pretest and posttest questions generated from the
+    test distribution
+    """
+    increment_dictionary = {parameters.pretest_seed_key: 1, parameters.posttest_seed_key: 1}
 
     def initExp(self,butler, pretest_count, training_count, posttest_count, guard_gap, alg_list):
         """
@@ -48,7 +54,6 @@ class FixedTrainRandomTest:
 
         return True
 
-
     def getQuery(self, butler, participant_uid):
         """
         generate a question to be displayed to the participant
@@ -70,10 +75,6 @@ class FixedTrainRandomTest:
         guard_count = (pretest_count + training_count + posttest_count) / guard_gap
         total_questions = pretest_count + training_count + posttest_count + guard_count
 
-        # acquire the question generation lock
-        ques_gen_lock = butler.memory.lock(parameters.ques_gen_lock_name)
-        ques_gen_lock.acquire()
-
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or posttest based on this value
         participant_info_dict = butler.algorithms.get(key=parameters.participant_info_dict_key)
@@ -88,35 +89,34 @@ class FixedTrainRandomTest:
             time_required = butler.algorithms.get(key=parameters.time_required_key)
             monetary_gain = butler.algorithms.get(key=parameters.monetary_gain_key)
 
-            # get the seed for this participant and generate the questions
-            pretest_seed = butler.algorithms.get(key=parameters.pretest_seed_key)
-            posttest_seed = butler.algorithms.get(key=parameters.posttest_seed_key)
+            # increment and get the seeds for this participant
+            seed_dict = butler.algorithms.increment_many(key_value_dict=self.increment_dictionary)
+            pretest_seed = seed_dict[parameters.pretest_seed_key]
+            posttest_seed = seed_dict[parameters.posttest_seed_key]
 
             # generate the questions for this participant and store them
-            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file, pretest_seed, posttest_seed,
-                                                                                          pretest_count, training_count, posttest_count, guard_gap, time_required,
-                                                                                          monetary_gain)
+            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file,
+                                                           pretest_seed, posttest_seed, pretest_count, training_count,
+                                                           posttest_count, guard_gap, time_required, monetary_gain)
 
             participant_info_dict[participant_uid] = participant_info
             butler.algorithms.set(key=parameters.participant_info_dict_key, value=participant_info_dict)
 
-            # increment the seed values
-            butler.algorithms.increment(key=parameters.pretest_seed_key)
-            butler.algorithms.increment(key=parameters.posttest_seed_key)
-
-
+            # have a separate num reported answers entry in butler
+            num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
+            num_reported_answers = 0
+            butler.algorithms.set(key=num_reported_answers_key, value=num_reported_answers)
         else:
             # get the participant information
             participant_info = butler.algorithms.get(key=parameters.participant_info_dict_key)[participant_uid]
-        # release the lock
-        ques_gen_lock.release()
+            num_reported_answers = butler.algorithms.get(key=utility.gen_num_reported_answers_key(participant_uid))
 
-        participant_question = participant_info.questions[participant_info.num_reported_answers]
+        participant_question = participant_info.questions[num_reported_answers]
 
-        return [participant_question.mol1, participant_question.mol2, participant_question.same, participant_question.ques_type,
-                    participant_question.ques_count, total_questions]
+        return [participant_question.mol1, participant_question.mol2, participant_question.same,
+                participant_question.ques_type, participant_question.ques_count, total_questions]
 
-    def processAnswer(self,butler, participant_uid, target_winner):
+    def processAnswer(self, butler, participant_uid, target_winner):
         """
         :param butler: Butler, the butler
         :participant_uid: str, a unique identifier for the participant
@@ -134,23 +134,9 @@ class FixedTrainRandomTest:
         total_questions = total_questions + (total_questions) / guard_gap
 
         # increment the number of questions the participant has viewed
-        num_reported_answers_increment_lock = butler.memory.lock('num_reported_answers_increment_lock')
-        num_reported_answers_increment_lock.acquire()
-        participant_info_dict = butler.algorithms.get(key=parameters.participant_info_dict_key)
-        participant_info = participant_info_dict[participant_uid]
-        num_reported_answers = participant_info.increment_num_reported_answers()
-
-        # if participant has answered all questions then delete information related to him/her
-        if num_reported_answers == total_questions:
-            participant_info_dict.pop(participant_uid, 'None')
-        else:
-            participant_info_dict[participant_uid] = participant_info
-        # need this set step, otherwise butler values are not updated
-        butler.algorithms.set(key=parameters.participant_info_dict_key, value=participant_info_dict)
-        num_reported_answers_increment_lock.release()
+        butler.algorithms.increment(key=utility.gen_num_reported_answers_key(participant_uid))
 
         return True
-
 
     def getModel(self, butler):
         return True
