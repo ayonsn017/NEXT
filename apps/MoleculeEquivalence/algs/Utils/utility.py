@@ -1,6 +1,6 @@
 from apps.MoleculeEquivalence.algs.Utils import parameters, ParticipantQuestion
 
-def gen_participant_questions(question_generator, guard_question_generator, ques_count, ques_type, index, guard_gap, 
+def gen_participant_questions(question_generator, guard_question_generator, ques_count, ques_type, index, guard_gap,
                                                     participant_questions):
     """
     :param question_generator: QuestionGenerator, generates questions
@@ -16,7 +16,7 @@ def gen_participant_questions(question_generator, guard_question_generator, ques
     for i in range(ques_count):
         # adding the question type
         question = question_generator.generate_question()
-        participant_question = ParticipantQuestion.ParticipantQuestion(question[0], question[1], question[2], 
+        participant_question = ParticipantQuestion.ParticipantQuestion(question[0], question[1], question[2],
                                                                                                                     ques_type, index)
         index += 1
         participant_questions.append(participant_question)
@@ -24,9 +24,18 @@ def gen_participant_questions(question_generator, guard_question_generator, ques
         # check if we should add guard questions
         if index % (guard_gap + 1) == 0:
             guard_question = guard_question_generator.generate_question()
-            participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2], 
+            participant_question = ParticipantQuestion.ParticipantQuestion(guard_question[0], guard_question[1], guard_question[2],
                                                                                                                         parameters.guard_key, index)
             index += 1
             participant_questions.append(participant_question)
 
     return participant_questions, index
+
+
+def gen_num_reported_answers_key(participant_uid):
+    """
+    generates a key for the number of reported answers for each new participant
+    :param participant_uid: the participant uid
+    :return string, a key for the number of reported answers for that participant
+    """
+    return participant_uid + 'num_reported_answers'
