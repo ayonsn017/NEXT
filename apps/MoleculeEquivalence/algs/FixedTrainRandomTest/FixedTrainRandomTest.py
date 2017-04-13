@@ -3,7 +3,7 @@ from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedIn
 import ast
 
 
-class FixedTrainRandomTest:
+class MyAlg:
     """
     class to present fixed training questions and pretest and posttest questions generated from the
     test distribution

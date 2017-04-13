@@ -3,7 +3,7 @@ from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, FixedIn
 import ast
 
 
-class RandomTrainTest:
+class MyAlg:
     """class to present questions generated at random from both the training and test distribution"""
 
     increment_dictionary = {parameters.pretest_seed_key: 1, parameters.training_seed_key: 1,
