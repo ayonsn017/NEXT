@@ -14,21 +14,20 @@ import os
 try:
         import next.apps.test_utils as test_utils
 except:
-        sys.path.append('../../../next/apps')
+        sys.path.append('../../next/apps')
         import test_utils
 
 
-def test_api(assert_200=True, num_arms=5,
-             num_experiments=1, num_clients=10, total_pulls=5):
+def test_api(assert_200=True, num_arms=5, num_experiments=1, num_clients=10, total_pulls=10):
     app_id = 'CardinalBanditsPureExploration'
     true_means = numpy.array(range(num_arms)[::-1])/float(num_arms)
 
-    pool = Pool(processes=num_clients)
+    pool = Pool(processes=min(100, num_clients))
 
     # input test parameters
     n = num_arms
     delta = 0.05
-    supported_alg_ids = ['LilUCB', 'RoundRobin']
+    supported_alg_ids = ['LilUCB', 'KLUCB', 'RoundRobin']
 
     labels = [{'label':'bad','reward':1.},{'label':'neutral','reward':2.},{'label':'good','reward':3.}]
 

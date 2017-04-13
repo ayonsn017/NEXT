@@ -66,6 +66,7 @@ class ExperimentAssistant(Resource):
         # TODO? replace with msgpack
         args = self.deserialise(request.get_data())
 
+        # Unpacking the YAML/ZIP file
         for key in args:
             if key not in {'bucket_id', 'key_id', 'secret_key'}:
                 comma_idx = args[key].find(',')
@@ -74,15 +75,22 @@ class ExperimentAssistant(Resource):
                     args[key] = True if args[key] == 'True' else False
                 else:
                     args[key] = base64.decodestring(args[key])
+
+        if all([key not in args for key in ['bucket_id', 'key_id', 'sercret_key']]):
+            args['upload'] = False
+        else:
+            args['upload'] = True
+
         utils.debug_print('args.keys() = ', args.keys())
 
         args['args'] = yaml.load(args['args'])
 
         try:
-            utils.debug_print(args['args'].keys())
             init_exp_args = args['args']
+            utils.debug_print("args.keys = ", args['args'].keys())
             if 'targets' in args.keys():
                 target_zipfile = args['targets']
+                utils.debug_print("args = ", args)
                 if args.get('upload', True):
                     bucket_id = args['bucket_id']
                     key_id = args['key_id']
@@ -111,6 +119,10 @@ class ExperimentAssistant(Resource):
             info = sys.exc_info()
             if hasattr(info[1], 'message') and len(info[1].message) > 0:
                 message = info[1].message
+                if 'time' in message:
+                    message += ("\nNOTE: error has to do with time; try "
+                                "restarting docker, more detail at "
+                                "https://stackoverflow.com/questions/27674968/amazon-s3-docker-403-forbidden-the-difference-between-the-request-time-and")
             else:
                 message = str(info[1]) + str(info[-1])
                 message = '\n'.join(tb.split('\n')[-5:])
