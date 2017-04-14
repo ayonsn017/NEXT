@@ -33,18 +33,6 @@ from docopt import docopt
 
 def verify_environ():
     to_have = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_BUCKET_NAME']
-<<<<<<< HEAD
-    for key in to_have:
-        if key not in os.environ:
-            print('Must define ' + key)
-    if 'NEXT_BACKEND_GLOBAL_HOST' not in os.environ:
-        print('NEXT_BACKEND_GLOBAL_HOST is not defined, '
-              'defaulting to localhost')
-
-
-def launch(init_filename, targets_filename=None, upload=True):
-    verify_environ()
-=======
     error = False
     for key in to_have:
         if key not in os.environ:
@@ -58,7 +46,6 @@ def launch(init_filename, targets_filename=None, upload=True):
 
 def launch(init_filename, targets_filename=None, upload=True):
     environ_error = verify_environ()
->>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
 
     with open(init_filename, 'r') as f:
         init = yaml.load(f)
@@ -72,20 +59,11 @@ def launch(init_filename, targets_filename=None, upload=True):
          'bucket_id': os.environ.get('AWS_BUCKET_NAME'),
          'upload': str(upload)}
 
-<<<<<<< HEAD
-    if upload:
-        for key in ['key_id', 'secret_key', 'bucket_id']:
-            if d[key] is None:
-                print('ERROR: If uploading to S3, define {}'.format(key) +
-                      ' (use --noS3 or --noupload to not use S3, variables'
-                      ' defined with "AWS_SECRET_ACCESS_KEY", etc')
-=======
     if upload and environ_error:
         print('Exiting early. Use --noS3 or --noupload to not upload to S3'
               ' and define AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY and '
               'AWS_BUCKET_NAME')
         raise ValueError('Define appropriate variables')
->>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
 
     if not upload:
         for key in ['key_id', 'secret_key', 'bucket_id']:
@@ -111,15 +89,9 @@ def launch(init_filename, targets_filename=None, upload=True):
     r = requests.post(host_url + '/assistant/init/experiment', data=data)
     response = r.json()
     if not response['success']:
-<<<<<<< HEAD
-        print('An error occured launching the experiment')
-        print(response['message'])
-        sys.exit()
-=======
         print('An error occured launching the experiment:\n')
         print(response['message'])
         raise ValueError("Experiment didn't launch successfully")
->>>>>>> ad81b02344d3a88d41032a54535bb5833112b08d
 
     dashboard_url = host_url + '/dashboard/experiment_dashboard/{}/{}'
     dashboard_url = dashboard_url.format(response['exp_uid'], init['app_id'])

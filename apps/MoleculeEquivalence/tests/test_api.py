@@ -139,7 +139,7 @@ def import_experiment_list(file):
     return experiment_list
 
 
-def test_api(assert_200=True, num_experiments=1, num_clients=80):
+def test_api(assert_200=True, num_experiments=1, num_clients=8):
     """
     method to test the app
     :param assert_200: boolean, default value True
@@ -149,7 +149,7 @@ def test_api(assert_200=True, num_experiments=1, num_clients=80):
     print os.getcwd()
 
     # path to files
-    target_file = '../../../local/data/01_X/mol_img_dict.json'
+    target_file = 'local/data/01_X/mol_img_dict.json'
     pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
     training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
     training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
@@ -167,9 +167,9 @@ def test_api(assert_200=True, num_experiments=1, num_clients=80):
     monetary_gain_key = 'monetary_gain'
 
     # question count variables
-    pretest_count = 30
-    training_count = 60
-    posttest_count = 30
+    pretest_count = 2
+    training_count = 6
+    posttest_count = 4
     guard_gap = 5
 
     pool = Pool(processes=num_clients)
@@ -337,7 +337,6 @@ def simulate_one_client(input_args):
         processAnswer_args_dict["args"]['response_time'] = response_time
 
         processAnswer_json_response, dt = test_utils.processAnswer(processAnswer_args_dict)
-        print 'Here', same, ques_type, ques_count, total_ques_count
         processAnswer_times.append(dt)
 
     r = test_utils.format_times(getQuery_times, processAnswer_times, total_pulls, participant_uid)
