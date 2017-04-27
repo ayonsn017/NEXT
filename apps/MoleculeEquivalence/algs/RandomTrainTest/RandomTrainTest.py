@@ -27,8 +27,6 @@ class MyAlg:
         butler.algorithms.set(key=parameters.guard_gap_key, value=guard_gap)
         # the number of total questions answered for this algorithm
         butler.algorithms.set(key=parameters.num_reported_answers_key, value=0)
-        # dictionary to store the information for a participant
-        butler.algorithms.set(key=parameters.participant_info_dict_key, value={})
 
         # converting string to list of dictionaries
         alg_list = ast.literal_eval(alg_list)
@@ -75,10 +73,11 @@ class MyAlg:
 
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or posttest based on this value
-        participant_info_dict = butler.algorithms.get(key=parameters.participant_info_dict_key)
+        participant_info_key = utility.gen_participant_info_key(participant_uid)
+        num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
 
         # new participant
-        if participant_uid not in participant_info_dict:
+        if not butler.algorithms.exists(key=participant_info_key):
             # get the file names
             pretest_file = butler.algorithms.get(key=parameters.pretest_file_key)
             training_file = butler.algorithms.get(key=parameters.training_file_key)
@@ -99,17 +98,15 @@ class MyAlg:
                                                            pretest_count, training_count, posttest_count, guard_gap,
                                                            time_required, monetary_gain)
 
-            participant_info_dict[participant_uid] = participant_info
-            butler.algorithms.set(key=parameters.participant_info_dict_key, value=participant_info_dict)
+            butler.algorithms.set(key=participant_info_key, value=participant_info)
 
             # have a separate num reported answers entry in butler
-            num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
             num_reported_answers = 0
             butler.algorithms.set(key=num_reported_answers_key, value=num_reported_answers)
         else:
             # get the participant information
-            participant_info = butler.algorithms.get(key=parameters.participant_info_dict_key)[participant_uid]
-            num_reported_answers = butler.algorithms.get(key=utility.gen_num_reported_answers_key(participant_uid))
+            participant_info = butler.algorithms.get(key=participant_info_key)
+            num_reported_answers = butler.algorithms.get(key=num_reported_answers_key)
 
         participant_question = participant_info.questions[num_reported_answers]
 

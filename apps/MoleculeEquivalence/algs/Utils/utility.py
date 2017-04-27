@@ -39,3 +39,12 @@ def gen_num_reported_answers_key(participant_uid):
     :return string, a key for the number of reported answers for that participant
     """
     return participant_uid + 'num_reported_answers'
+
+
+def gen_participant_info_key(participant_uid):
+    """
+    generates a key for the participant infofor each new participant
+    :param participant_uid: the participant uid
+    :return string, a key for the number of reported answers for that participant
+    """
+    return participant_uid + 'participant_info'
