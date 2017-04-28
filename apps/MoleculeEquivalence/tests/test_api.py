@@ -138,6 +138,17 @@ def import_experiment_list(file):
     experiment_list = mod.experiment_list
     return experiment_list
 
+def read_file(fname):
+    """
+    read a file and return its contents
+    :param fname: string, path to file which will be read
+    :return string, the contents of the file
+    """
+    with open(fname, 'r') as fread:
+        data = fread.read()
+
+    return data
+
 
 def test_api(assert_200=True, num_experiments=1, num_clients=8):
     """
@@ -148,8 +159,8 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     """
     print os.getcwd()
 
-    # path to files
-    target_file = 'local/data/01_X/mol_img_dict.json'
+    # path to files (relative path, depends on where the test is called from)
+    target_file = './local/data/01_X/mol_img_dict.json'
     pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
     training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
     training_dataset_fname = './local/data/04_SampleDataset/training_dataset.csv'
@@ -157,10 +168,10 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     posttest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
 
     # keys
-    pretest_file_key = 'pretest_file'
-    training_file_key = 'training_file'
-    posttest_file_key = 'posttest_file'
-    guard_file_key = 'guard_file'
+    pretest_dist_key = 'pretest_dist'
+    training_data_key = 'training_data'
+    posttest_dist_key = 'posttest_dist'
+    guard_data_key = 'guard_data'
     alg_id_key = 'alg_id'
     alg_label_key = 'alg_label'
     time_required_key = 'time_required'
@@ -180,10 +191,10 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     alg_item = {}
     alg_item[alg_id_key] = supported_alg_ids[0]
     alg_item[alg_label_key] = supported_alg_ids[0]
-    alg_item[pretest_file_key] = pretest_dist_fname
-    alg_item[training_file_key] = training_dataset_fname
-    alg_item[posttest_file_key] = posttest_dist_fname
-    alg_item[guard_file_key] = guard_dataset_fname
+    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
+    alg_item[training_data_key] = read_file(training_dataset_fname)
+    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
+    alg_item[guard_data_key] = read_file(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
@@ -192,10 +203,10 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     alg_item = {}
     alg_item[alg_id_key] = supported_alg_ids[1]
     alg_item[alg_label_key] = supported_alg_ids[1]
-    alg_item[pretest_file_key] = pretest_dist_fname
-    alg_item[training_file_key] = training_dist_fname
-    alg_item[posttest_file_key] = posttest_dist_fname
-    alg_item[guard_file_key] = guard_dataset_fname
+    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
+    alg_item[training_data_key] = read_file(training_dist_fname)
+    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
+    alg_item[guard_data_key] = read_file(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
@@ -281,8 +292,11 @@ def simulate_one_client(input_args):
 
     getQuery_times = []
     processAnswer_times = []
+    start_time = time.time()
     for t in range(total_pulls):
-        print "Participant {1} has taken {0} pulls".format(t, participant_uid)
+        end_time = time.time()
+        print "Participant {1} has taken {0} pulls, time required {2}".format(t, participant_uid, end_time - start_time)
+        start_time = time.time()
         # test POST getQuery #
         widget = True
         getQuery_args_dict = {'args': {'participant_uid': participant_uid,

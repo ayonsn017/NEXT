@@ -12,17 +12,17 @@ initExp:
               alg_id:
                 description: Supported algorithm types for MoleculeEquivalence.
                 values: [RandomTrainTest, FixedTrainRandomTest]
-              pretest_file:
-                description: A pretest file name which may contain a list of pretest questions or a distribution depending on the algorithm to launch
+              pretest_dist:
+                description: String containing pretest distribution
                 type: str
-              training_file:
-                description: A training file name which may contain a list of training questions or a distribution depending on the algorithm to launch
+              training_data:
+                description: String which may contain a list of training questions or a distribution depending on the algorithm to launch
                 type: str
-              posttest_file:
-                description: A posttest file name which may contain a list of posttest questions or a distribution depending on the algorithm to launch
+              posttest_dist:
+                description: String containing posstest distribution
                 type: str
-              guard_file: 
-                description: A guard file name which contains the list of guard questions to show  
+              guard_data: 
+                description: String containing a list of guard questions  
                 type: str
               time_required:
                 description: Estimated time required to complete the survey, will be shown in introduction

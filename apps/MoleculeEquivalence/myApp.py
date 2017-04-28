@@ -6,19 +6,15 @@ from apps.MoleculeEquivalence.algs.Utils import parameters
 class MyApp:
     """class for the MoleculeEquivalence app"""
 
+    # keys in dictionary; defined here so in only one place and easy changing
     alg_list_key = 'alg_list'
     alg_label_key = 'alg_label'
     participant_count_key = 'participant_count'
-    assign_alg_lock_name = 'assign_alg_lock'
-    pretest_file_key = 'pretest_file'
-    training_file_key = 'training_file'
-    posttest_file_key = 'posttest_file'
 
     def __init__(self, db):
         """:param db: the database object"""
         self.app_id = 'MoleculeEquivalence'
         self.TargetManager = next.apps.AltDescTargetManager.AltDescTargetManager(db)
-        self.alg_counts = None
 
     def initExp(self, butler, init_algs, args):
         """

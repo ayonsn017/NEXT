@@ -17,8 +17,7 @@ class MyAlg:
         :param posttest_count: int, the number of posttest questions to show
         :param guard_gap: int, the gap between guard questions
         :param alg_list: list[dict], a list containing parameters that vary across algorithms
-        for this algorithm we need pretest, training and posttest files that contain the pretest, training and posttest
-        distribution respectively
+        for this algorithm we need pretest distribution, training distribution, posttest distribution and guard data
         :return bool: True to indicate that algorithm initialization was a success
         """
         butler.algorithms.set(key=parameters.pretest_count_key, value=pretest_count)
@@ -36,11 +35,11 @@ class MyAlg:
             if alg_desc[parameters.alg_label_key] == butler.alg_label:
                 alg_params = alg_desc
 
-        # save the pretest, training, posttest, guard files and time required
-        butler.algorithms.set(key=parameters.pretest_file_key, value=alg_params[parameters.pretest_file_key])
-        butler.algorithms.set(key=parameters.training_file_key, value=alg_params[parameters.training_file_key])
-        butler.algorithms.set(key=parameters.posttest_file_key, value=alg_params[parameters.posttest_file_key])
-        butler.algorithms.set(key=parameters.guard_file_key, value=alg_params[parameters.guard_file_key])
+        # save the pretest, training, posttest, guard data, time required to finish the survey and monetary gain
+        butler.algorithms.set(key=parameters.pretest_dist_key, value=alg_params[parameters.pretest_dist_key])
+        butler.algorithms.set(key=parameters.training_data_key, value=alg_params[parameters.training_data_key])
+        butler.algorithms.set(key=parameters.posttest_dist_key, value=alg_params[parameters.posttest_dist_key])
+        butler.algorithms.set(key=parameters.guard_data_key, value=alg_params[parameters.guard_data_key])
         butler.algorithms.set(key=parameters.time_required_key, value=alg_params[parameters.time_required_key])
         butler.algorithms.set(key=parameters.monetary_gain_key, value=alg_params[parameters.monetary_gain_key])
 
@@ -78,11 +77,11 @@ class MyAlg:
 
         # new participant
         if not butler.algorithms.exists(key=participant_info_key):
-            # get the file names
-            pretest_file = butler.algorithms.get(key=parameters.pretest_file_key)
-            training_file = butler.algorithms.get(key=parameters.training_file_key)
-            posttest_file = butler.algorithms.get(key=parameters.posttest_file_key)
-            guard_file = butler.algorithms.get(key=parameters.guard_file_key)
+            # get the data, time required to finish the survey and monetary gain
+            pretest_dist = butler.algorithms.get(key=parameters.pretest_dist_key)
+            training_dist = butler.algorithms.get(key=parameters.training_data_key)
+            posttest_dist = butler.algorithms.get(key=parameters.posttest_dist_key)
+            guard_data = butler.algorithms.get(key=parameters.guard_data_key)
             time_required = butler.algorithms.get(key=parameters.time_required_key)
             monetary_gain = butler.algorithms.get(key=parameters.monetary_gain_key)
 
@@ -93,7 +92,7 @@ class MyAlg:
             posttest_seed = seed_dict[parameters.posttest_seed_key]
 
             # generate the questions for this participant and store them
-            participant_info = self.generate_all_questions(pretest_file, training_file, posttest_file, guard_file,
+            participant_info = self.generate_all_questions(pretest_dist, training_dist, posttest_dist, guard_data,
                                                            pretest_seed, training_seed, posttest_seed,
                                                            pretest_count, training_count, posttest_count, guard_gap,
                                                            time_required, monetary_gain)
@@ -130,15 +129,15 @@ class MyAlg:
     def getModel(self, butler):
         return True
 
-    def generate_all_questions(self, pretest_file, training_file, posttest_file, guard_file, pretest_seed,
+    def generate_all_questions(self, pretest_dist, training_dist, posttest_dist, guard_data, pretest_seed,
                                training_seed, posttest_seed, pretest_count, training_count, posttest_count,
                                guard_gap, time_required, monetary_gain):
         """
         generate all questions for a participant
-        :param pretest_file: string, the pretest file name
-        :param training_file: string, the training file name
-        :param posttest_file: string, the posttest file name
-        :param guard_file: string, the guard file name
+        :param pretest_dist: string, the pretest distribution in string format
+        :param training_dist: string, the training distribution in string format
+        :param posttest_dist: string, the posttest distribution in string format
+        :param guard_data: string, the guard questions in string format
         :param pretest_seed: int, the pretest seed
         :param training_seed: int, the training seed
         :param posttest_seed: int, the posttest seed
@@ -175,10 +174,10 @@ class MyAlg:
 
         index = 1
         # guard question generator
-        guard_question_generator = FixedInstanceReader.FixedInstanceReader(guard_file)
+        guard_question_generator = FixedInstanceReader.FixedInstanceReader(guard_data)
 
         # pretest questions
-        pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_file, seed=pretest_seed)
+        pretest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(pretest_dist, seed=pretest_seed)
         participant_questions, index = utility.gen_participant_questions(pretest_question_generator,
                                                                          guard_question_generator,
                                                                          pretest_count, parameters.pretest_key, index,
@@ -190,7 +189,7 @@ class MyAlg:
         participant_questions.append(participant_question)
 
         # training questions
-        training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_file, seed=training_seed)
+        training_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(training_dist, seed=training_seed)
         participant_questions, index = utility.gen_participant_questions(training_question_generator,
                                                                          guard_question_generator,
                                                                          training_count, parameters.training_key, index,
@@ -202,7 +201,7 @@ class MyAlg:
         participant_questions.append(participant_question)
 
         # posttest questions
-        posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_file, seed=posttest_seed)
+        posttest_question_generator = RandomInstanceGenerator.RandomInstanceGenerator(posttest_dist, seed=posttest_seed)
         participant_questions, index = utility.gen_participant_questions(posttest_question_generator,
                                                                          guard_question_generator, posttest_count,
                                                                          parameters.posttest_key, index, guard_gap,

@@ -1,5 +1,7 @@
 import numpy as np
 from apps.MoleculeEquivalence.algs.Utils import QuestionGenerator
+from io import StringIO
+
 
 class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
     probability_index = 5  # index in distribution list where the probability value is stored
@@ -9,7 +11,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
         :param input_fname: string, name of the file that contains the distribution
         :param seed: int, default value -1, the random seed to use while generating instances
         """
-        self.distributions = np.genfromtxt(input_fname, dtype='str', delimiter=',', skip_header=1)
+        self.distributions = np.genfromtxt(StringIO(input_fname), dtype='str', delimiter=',', skip_header=1)
         self.probabilities = [float(entry[self.probability_index]) for entry in self.distributions ]
 
         if seed != -1:
@@ -19,7 +21,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
     def generate_question(self):
         """
         return a question generated using the distribution
-        :return: [str, str, int], [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same], 
+        :return: [str, str, int], [representation1 || '_' || molecule1,  representation2 || '_' ||molecule2, same],
                     same is 1 if the two molecules are the same 0 otherwise
         """
         multinomial_draw = np.random.multinomial(1, self.probabilities, size=1)[0]
@@ -32,7 +34,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
             mol1, rep1, mol2, rep2, same =self.distributions[index][:self.probability_index]
         else:
             mol2, rep2, mol1, rep1, same = self.distributions[index][:self.probability_index]
-            
+
         return [rep1 + '_' + mol1, rep2 + '_' +mol2, same]
 
 
@@ -40,13 +42,12 @@ if __name__ == '__main__':
     input_fname = '../../../../local/data/03_TrainingPool/training_dist_LewisSF.csv'
 
     instance_generator1 = RandomInstanceGenerator(input_fname, seed=10)
-    
+
 
     for i in range(6):
         print i, 'instance generator round 1', instance_generator1.generate_question()
-        
+
     np.random.seed(10)
 
     for i in range(6):
         print i, 'instance generator round 2', instance_generator1.generate_question()
-
