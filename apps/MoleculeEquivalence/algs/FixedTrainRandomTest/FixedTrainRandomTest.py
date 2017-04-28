@@ -26,8 +26,11 @@ class MyAlg:
         butler.algorithms.set(key=parameters.training_count_key, value=training_count)
         butler.algorithms.set(key=parameters.posttest_count_key, value=posttest_count)
         butler.algorithms.set(key=parameters.guard_gap_key, value=guard_gap)
-        # the number of total questions answered for this algorithm
-        butler.algorithms.set(key=parameters.num_reported_answers_key, value=0)
+
+        # count total number of questions to show
+        guard_count = (pretest_count + training_count + posttest_count) / guard_gap
+        total_questions = pretest_count + training_count + posttest_count + guard_count
+        butler.algorithms.set(key=parameters.total_questions_key, value=total_questions)
 
         # converting string to list of dictionaries
         alg_list = ast.literal_eval(alg_list)
@@ -61,16 +64,6 @@ class MyAlg:
         or training ques_no is the question number to be displayed to the participant total_ques_count is the total
         number of questions to be displayed to the participant
         """
-        # get the question counts
-        pretest_count = butler.algorithms.get(key=parameters.pretest_count_key)
-        training_count = butler.algorithms.get(key=parameters.training_count_key)
-        posttest_count = butler.algorithms.get(key=parameters.posttest_count_key)
-        guard_gap = butler.algorithms.get(key=parameters.guard_gap_key)
-
-        # count total number of questions to show
-        guard_count = (pretest_count + training_count + posttest_count) / guard_gap
-        total_questions = pretest_count + training_count + posttest_count + guard_count
-
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or posttest based on this value
         participant_info_key = utility.gen_participant_info_key(participant_uid)
@@ -78,6 +71,12 @@ class MyAlg:
 
         # new participant
         if not butler.algorithms.exists(key=participant_info_key):
+            # get the question counts
+            pretest_count = butler.algorithms.get(key=parameters.pretest_count_key)
+            training_count = butler.algorithms.get(key=parameters.training_count_key)
+            posttest_count = butler.algorithms.get(key=parameters.posttest_count_key)
+            guard_gap = butler.algorithms.get(key=parameters.guard_gap_key)
+
             # get the data, time required to finish the survey and monetary gain
             pretest_dist = butler.algorithms.get(key=parameters.pretest_dist_key)
             training_data = butler.algorithms.get(key=parameters.training_data_key)
@@ -107,6 +106,8 @@ class MyAlg:
             num_reported_answers = butler.algorithms.get(key=num_reported_answers_key)
 
         participant_question = participant_info.questions[num_reported_answers]
+        # get the total number of questions to show
+        total_questions = butler.algorithms.get(key=parameters.total_questions_key)
 
         return [participant_question.mol1, participant_question.mol2, participant_question.same,
                 participant_question.ques_type, participant_question.ques_count, total_questions]
@@ -117,9 +118,6 @@ class MyAlg:
         :participant_uid: str, a unique identifier for the participant
         :target_winner: int, index of the target the participant selected
         """
-        # increment the number of reported answers for the algorithm by one
-        butler.algorithms.increment(key=parameters.num_reported_answers_key)
-
         # increment the number of questions the participant has viewed by one
         butler.algorithms.increment(key=utility.gen_num_reported_answers_key(participant_uid))
 
