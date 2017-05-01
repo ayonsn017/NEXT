@@ -72,7 +72,7 @@ div.instruction_box{
         &nbsp;
         &nbsp;
         <button type="button" id="proceeed_btn" class="btn btn-danger"
-                        onclick="submit_yes()" style="float: right;">Proceed
+                        onclick="proceed()" style="float: right;">Proceed
         </button>
         <br>
     </div>
@@ -134,7 +134,7 @@ div.instruction_box{
             <input type="radio" name="participant_answer" id ="participant_answer_yes" value="Yes"> Yes<br>
             <input type="radio" name="participant_answer" id ="participant_answer_no" value="No"> No<br>
         </form>
-        <button type="button" onclick="submit();" class="btn btn-danger" style="float: right;">Submit</button>
+        <button type="button" id="answer_submit_no_feedback" onclick="submit();" class="btn btn-danger" style="float: right;">Submit</button>
 
         {% endif %}
     </div>
@@ -143,7 +143,7 @@ div.instruction_box{
     <!-- Feedback div -->
     <div class="feedback_box" id="feedback_div">
         <h2 id="feedback_text">Your answer is <span style="font-weight: bold;"  id="feedback_msg1" ></span>. <span style=""  id="feedback_msg2" ></span></h2>
-        <button type="button" id="proceeed_btn" class="btn btn-danger"
+        <button type="button" class="btn btn-danger" id="answer_submit_feedback"
                         onclick="submit_response()" style="float: right;">Proceed</button>
     </div>
     <!-- Must answer div -->
@@ -188,6 +188,7 @@ var respond = function(label){
 var submit_response = function() {
     /* note: response variable always exists because the variable is assigned before modal
     displays, showing this button that calls this function*/ 
+    document.getElementById("answer_submit_feedback").disabled = true;
     if (response) {
         submit_yes()
     }
@@ -235,6 +236,10 @@ var generate_feedback_message2 = function(same) {
     }
 }
 
+var proceed = function() {
+    document.getElementById("proceeed_btn").disabled = true;
+    submit_yes();
+}
 
 var submit_yes = function() {
     console.log('Submitting yes');
@@ -248,9 +253,11 @@ var submit_no = function() {
 
 var submit = function() {
     if(document.getElementById('participant_answer_yes').checked) {
+        document.getElementById("answer_submit_no_feedback").disabled = true;
         submit_yes();
     }
     else if(document.getElementById('participant_answer_no').checked) {
+        document.getElementById("answer_submit_no_feedback").disabled = true;
         submit_no();
     }
     else {
