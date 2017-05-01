@@ -1,4 +1,4 @@
-from apps.MoleculeEquivalence.algs.Utils import parameters, ParticipantQuestion
+from apps.MoleculeEquivalence.algs.Utils import parameters
 
 
 def gen_participant_questions(question_generator, guard_question_generator, ques_count, ques_type, index, guard_gap,
@@ -43,10 +43,10 @@ def gen_num_reported_answers_key(participant_uid):
     return participant_uid + 'num_reported_answers'
 
 
-def gen_participant_info_key(participant_uid):
+def gen_participant_questions_key(participant_uid):
     """
     generates a key for the participant infofor each new participant
     :param participant_uid: the participant uid
     :return string, a key for the number of reported answers for that participant
     """
-    return participant_uid + 'participant_info'
+    return participant_uid + 'participant_questions'

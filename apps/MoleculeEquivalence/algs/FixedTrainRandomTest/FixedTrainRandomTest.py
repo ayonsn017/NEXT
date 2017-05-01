@@ -66,11 +66,11 @@ class MyAlg:
         """
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or posttest based on this value
-        participant_info_key = utility.gen_participant_info_key(participant_uid)
+        participant_questions_key = utility.gen_participant_questions_key(participant_uid)
         num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
 
         # new participant
-        if not butler.algorithms.exists(key=participant_info_key):
+        if not butler.algorithms.exists(key=participant_questions_key):
             # get the question counts
             pretest_count = butler.algorithms.get(key=parameters.pretest_count_key)
             training_count = butler.algorithms.get(key=parameters.training_count_key)
@@ -94,22 +94,22 @@ class MyAlg:
             total_questions = butler.algorithms.get(key=parameters.total_questions_key)
 
             # generate the questions for this participant and store them
-            participant_info = self.generate_all_questions(pretest_dist, training_data, posttest_dist, guard_data,
-                                                           pretest_seed, posttest_seed, pretest_count, training_count,
-                                                           posttest_count, guard_gap, time_required, monetary_gain,
-                                                           total_questions)
+            participant_questions = self.generate_all_questions(pretest_dist, training_data, posttest_dist, guard_data,
+                                                                pretest_seed, posttest_seed, pretest_count,
+                                                                training_count, posttest_count, guard_gap,
+                                                                time_required, monetary_gain, total_questions)
 
-            butler.algorithms.set(key=participant_info_key, value=participant_info)
+            butler.algorithms.set(key=participant_questions_key, value=participant_questions)
 
             # have a separate num reported answers entry in butler
             num_reported_answers = 0
             butler.algorithms.set(key=num_reported_answers_key, value=num_reported_answers)
         else:
             # get the participant information
-            participant_info = butler.algorithms.get(key=participant_info_key)
+            participant_questions = butler.algorithms.get(key=participant_questions_key)
             num_reported_answers = butler.algorithms.get(key=num_reported_answers_key)
 
-        participant_question = participant_info[num_reported_answers]
+        participant_question = participant_questions[num_reported_answers]
 
         return participant_question
 
@@ -120,7 +120,15 @@ class MyAlg:
         :target_winner: int, index of the target the participant selected
         """
         # increment the number of questions the participant has viewed by one
-        butler.algorithms.increment(key=utility.gen_num_reported_answers_key(participant_uid))
+        num_reported_answers_key = utility.gen_num_reported_answers_key(participant_uid)
+        num_reported_answers = butler.algorithms.increment(key=num_reported_answers_key)
+
+        # delete the entry if all questions answered
+        participant_questions_key = utility.gen_participant_questions_key(participant_uid)
+        participant_questions = butler.algorithms.get(key=participant_questions_key)
+        if num_reported_answers == len(participant_questions):
+            butler.algorithms.get_and_delete(key=participant_questions_key)
+            butler.algorithms.get_and_delete(key=num_reported_answers_key)
 
         return True
 
