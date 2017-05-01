@@ -31,7 +31,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
         # generate a RV from Bernoulli distribution to decide whether the molecule positions will be flipped or not
         flip = np.random.binomial(1, 0.5)
         if flip == 0:
-            mol1, rep1, mol2, rep2, same =self.distributions[index][:self.probability_index]
+            mol1, rep1, mol2, rep2, same = self.distributions[index][:self.probability_index]
         else:
             mol2, rep2, mol1, rep1, same = self.distributions[index][:self.probability_index]
 
