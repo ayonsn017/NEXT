@@ -1,4 +1,4 @@
-molecule1,representation1,molecule2,representation2,same
+Molecule1,Representation1,Molecule2,Representation2,Same
 BeCl2,Lewis,BeCl2,SF,1
 H2,SF,O2,Lewis,0
 BeCl2,Lewis,BeCl2,SF,1

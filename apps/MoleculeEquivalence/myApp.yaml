@@ -13,17 +13,76 @@ initExp:
                 description: Supported algorithm types for MoleculeEquivalence.
                 values: [RandomTrainTest, FixedTrainRandomTest]
               pretest_dist:
-                description: String containing pretest distribution
-                type: str
+                description: the pretest distribution as a list of dictionaries
+                type: list
+                values:
+                    type: dict
+                    values:
+                        Molecule1:
+                            type: str
+                        Representation1:
+                            type: str
+                        Molecule2:
+                            type: str
+                        Representation2:
+                            type: str
+                        Same:
+                            type: str
+                        Probability:
+                            type: str
               training_data:
-                description: String which may contain a list of training questions or a distribution depending on the algorithm to launch
-                type: str
+                description: the training distribution or training questions as a list of dictionaries
+                type: list
+                values:
+                    type: dict
+                    values:
+                        Molecule1:
+                            type: str
+                        Representation1:
+                            type: str
+                        Molecule2:
+                            type: str
+                        Representation2:
+                            type: str
+                        Same:
+                            type: str
+                        Probability:
+                            type: str
+                            optional: true
               posttest_dist:
-                description: String containing posstest distribution
-                type: str
+                description: the pretest distribution as a list of dictionaries
+                type: list
+                values:
+                    type: dict
+                    values:
+                        Molecule1:
+                            type: str
+                        Representation1:
+                            type: str
+                        Molecule2:
+                            type: str
+                        Representation2:
+                            type: str
+                        Same:
+                            type: str
+                        Probability:
+                            type: str
               guard_data: 
                 description: String containing a list of guard questions  
-                type: str
+                type: list
+                values:
+                    type: dict
+                    values:
+                        Molecule1:
+                            type: str
+                        Representation1:
+                            type: str
+                        Molecule2:
+                            type: str
+                        Representation2:
+                            type: str
+                        Same:
+                            type: str
               time_required:
                 description: Estimated time required to complete the survey, will be shown in introduction
                 type: str

@@ -1,22 +1,24 @@
 import numpy as np
 from apps.MoleculeEquivalence.algs.Utils import QuestionGenerator
-from io import StringIO
 
 
 class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
+    """Class to generate random questions from a distribution"""
+
     probability_index = 5  # index in distribution list where the probability value is stored
     same_index = 4  # index in distribution list where the same variable is stored
-    def __init__(self, input_fname, seed=-1):
+    keys = ['Molecule1', 'Representation1', 'Molecule2', 'Representation2', 'Same', 'Probability']
+
+    def __init__(self, dictlist, seed=-1):
         """
-        :param input_fname: string, name of the file that contains the distribution
+        :param dictlist: list(dict(string, string)), list of dictionaries containing the distribution
         :param seed: int, default value -1, the random seed to use while generating instances
         """
-        self.distributions = np.genfromtxt(StringIO(input_fname), dtype='str', delimiter=',', skip_header=1)
-        self.probabilities = [float(entry[self.probability_index]) for entry in self.distributions ]
+        self.distributions = np.array([[row[key] for key in self.keys] for row in dictlist])
+        self.probabilities = [float(entry[self.probability_index]) for entry in self.distributions]
 
         if seed != -1:
             np.random.seed(seed);
-
 
     def generate_question(self):
         """
@@ -26,7 +28,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
         """
         multinomial_draw = np.random.multinomial(1, self.probabilities, size=1)[0]
 
-        index = np.where(multinomial_draw==1)[0][0]
+        index = np.where(multinomial_draw == 1)[0][0]
 
         # generate a RV from Bernoulli distribution to decide whether the molecule positions will be flipped or not
         flip = np.random.binomial(1, 0.5)

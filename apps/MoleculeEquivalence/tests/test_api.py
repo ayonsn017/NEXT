@@ -138,16 +138,17 @@ def import_experiment_list(file):
     experiment_list = mod.experiment_list
     return experiment_list
 
-def read_file(fname):
-    """
-    read a file and return its contents
-    :param fname: string, path to file which will be read
-    :return string, the contents of the file
-    """
-    with open(fname, 'r') as fread:
-        data = fread.read()
 
-    return data
+def read_csv_to_dictlist(fname):
+    """
+    read a csv file. return a list of dictionaries for each row in the csv file
+    :param fname: string, path to the input csv file
+    :return a list of dictionaries
+    """
+    with open(fname) as f:
+        dictlist = [{k: str(v) for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
+
+    return dictlist
 
 
 def test_api(assert_200=True, num_experiments=1, num_clients=8):
@@ -157,9 +158,7 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     :param num_experiments: int, number of experiments to run
     :param num_clients: int, number of clients to simulate
     """
-    print os.getcwd()
-
-    # path to files (relative path, depends on where the test is called from)
+    # path to files (relative path, depends on where the test is called)
     target_file = './local/data/01_X/mol_img_dict.json'
     pretest_dist_fname = './local/data/02_TestDistribution/test_dist_LewisSF.csv'
     training_dist_fname = './local/data/03_TrainingPool/training_dist_LewisSF.csv'
@@ -191,10 +190,10 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     alg_item = {}
     alg_item[alg_id_key] = supported_alg_ids[0]
     alg_item[alg_label_key] = supported_alg_ids[0]
-    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
-    alg_item[training_data_key] = read_file(training_dataset_fname)
-    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
-    alg_item[guard_data_key] = read_file(guard_dataset_fname)
+    alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
+    alg_item[training_data_key] = read_csv_to_dictlist(training_dataset_fname)
+    alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
+    alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
@@ -203,10 +202,10 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     alg_item = {}
     alg_item[alg_id_key] = supported_alg_ids[1]
     alg_item[alg_label_key] = supported_alg_ids[1]
-    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
-    alg_item[training_data_key] = read_file(training_dist_fname)
-    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
-    alg_item[guard_data_key] = read_file(guard_dataset_fname)
+    alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
+    alg_item[training_data_key] = read_csv_to_dictlist(training_dist_fname)
+    alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
+    alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
@@ -269,7 +268,7 @@ def test_api(assert_200=True, num_experiments=1, num_clients=8):
     for result in results:
         print result
 
-    test_utils.getModel(exp_uid, app_id, supported_alg_ids, alg_list)
+    #test_utils.getModel(exp_uid, app_id, supported_alg_ids, alg_list)
 
 
 def simulate_one_client(input_args):

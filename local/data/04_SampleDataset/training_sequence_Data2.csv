@@ -1,4 +1,4 @@
-molecule1,representation1,molecule2,representation2,same
+Molecule1,Representation1,Molecule2,Representation2,Same
 NF3,Lewis,NH3,SF,0
 NF3,Lewis,NF3,SF,1
 C3H3OH,SF,C4H5Cl,Lewis,0

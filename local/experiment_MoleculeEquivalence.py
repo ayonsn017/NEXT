@@ -1,20 +1,22 @@
 import os, sys
+import csv
 
 # import launch_experiment. We assume that it is located in the next-discovery top level directory.
 sys.path.append("../")
 from launch_experiment import *
 
 
-def read_file(fname):
+def read_csv_to_dictlist(fname):
     """
-    read a file and return its contents
-    :param fname: string, path to file which will be read
-    :return string, the contents of the file
+    read a csv file. return a list of dictionaries for each row in the csv file
+    :param fname: string, path to the input csv file
+    :return a list of dictionaries
     """
-    with open(fname, 'r') as fread:
-        data = fread.read()
+    with open(fname) as f:
+        dictlist = [{k: str(v) for k, v in row.items()} for row in csv.DictReader(f, skipinitialspace=True)]
 
-    return data
+    return dictlist
+
 
 if __name__ == '__main__':
     # path to files
@@ -46,10 +48,10 @@ if __name__ == '__main__':
     alg_item = {}
     alg_item[alg_id_key] = alg_ids[0]
     alg_item[alg_label_key] = alg_ids[0]
-    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
-    alg_item[training_data_key] = read_file(training_dataset_fname)
-    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
-    alg_item[guard_data_key] = read_file(guard_dataset_fname)
+    alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
+    alg_item[training_data_key] = read_csv_to_dictlist(training_dataset_fname)
+    alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
+    alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
@@ -58,10 +60,10 @@ if __name__ == '__main__':
     alg_item = {}
     alg_item[alg_id_key] = alg_ids[1]
     alg_item[alg_label_key] = alg_ids[1]
-    alg_item[pretest_dist_key] = read_file(pretest_dist_fname)
-    alg_item[training_data_key] = read_file(training_dist_fname)
-    alg_item[posttest_dist_key] = read_file(posttest_dist_fname)
-    alg_item[guard_data_key] = read_file(guard_dataset_fname)
+    alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
+    alg_item[training_data_key] = read_csv_to_dictlist(training_dist_fname)
+    alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
+    alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
     alg_item[time_required_key] = '5-10'
     alg_item[monetary_gain_key] = 'You will be entered in a lottery to win a $50 cash prize.'
     alg_list.append(alg_item)
