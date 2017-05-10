@@ -3,6 +3,10 @@
   height:100%;
   }
 
+  div {
+    max-width: 900px
+  }
+
   div.container{
   height:100%;
   }
@@ -79,7 +83,7 @@ div.instruction_box{
 {% else %}
     <div style="text-align:right;"><span style="font-size:35px;">{{ query.ques_count }}/{{ query.total_ques_count }}</span></div>
     <div>
-        <h2>Are the following two molecules the same? </h2>
+        <h3>Are the following two molecules the same? </h3>
     </div>
 
     <br>
@@ -142,13 +146,13 @@ div.instruction_box{
     <br>
     <!-- Feedback div -->
     <div class="feedback_box" id="feedback_div">
-        <h2 id="feedback_text">Your answer is <span style="font-weight: bold;"  id="feedback_msg1" ></span>. <span style=""  id="feedback_msg2" ></span></h2>
+        <h3 id="feedback_text">Your answer is <span style="font-weight: bold;"  id="feedback_msg1" ></span>. <span style=""  id="feedback_msg2" ></span></h3>
         <button type="button" class="btn btn-danger" id="answer_submit_feedback"
                         onclick="submit_response()" style="float: right;">Proceed</button>
     </div>
     <!-- Must answer div -->
     <div class="feedback_box" id="must_answer_div">
-        <h2 >You must select either Yes or No to proceed. </h2>
+        <h3 >You must select either Yes or No to proceed. </h3>
     </div>
 
 {% endif %}
