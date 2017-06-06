@@ -167,12 +167,15 @@ class DatabaseAPI(object):
         elif end == -1:
             mongo_idx = 1
         else:
-            raise DatabaseException("Can only pop first (index=0) or last (index=-1) element of list!")
+            raise IndexError("Can only pop first (index=0) or last (index=-1) element of list!")
 
         val = self._bucket(bucket_id).find_and_modify({"_id": doc_uid},
             {'$pop': {key: mongo_idx}}).get(key)
 
-        return from_db_fmt(val[end])
+        try:
+            return from_db_fmt(val[end])
+        except IndexError:
+            raise IndexError("Cannot pop from empty list!")
 
     def append_list(self,bucket_id,doc_uid,key,value):
         return self._bucket(bucket_id).find_one_and_update({"_id": doc_uid},
