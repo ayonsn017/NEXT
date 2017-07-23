@@ -9,8 +9,8 @@ import next.utils as utils
 
 
 class Memory(object):
-    def __init__(self, collection='', exp_uid=''):
-        self.key_prefix = collection + exp_uid
+    def __init__(self, collection='', exp_uid='', uid_prefix=''):
+        self.key_prefix = collection + uid_prefix.format(exp_uid=exp_uid)
         self.cache = None
         self.max_entry_size = 500000000  # 500MB
 
@@ -32,7 +32,7 @@ class Memory(object):
             return size / self.max_entry_size
         else:
             return (size / self.max_entry_size) + 1
-        
+
     def set(self, key, value):
         self.check_prefix()
         key = self.key_prefix + key
@@ -115,7 +115,7 @@ class Memory(object):
         except Exception as e:
             utils.debug_print("Butler.Collection.Memory.lock exception: {}".format(e))
             return None
-    
+
     def exists(self, key):
         try:
             self.ensure_connection()
@@ -135,7 +135,7 @@ class Collection(object):
         self.get_durations = 0.0
         self.set_durations = 0.0
         self.timing = timing
-        self.memory = Memory(collection, exp_uid)
+        self.memory = Memory(collection, exp_uid, uid_prefix)
 
     def timed(op_type='set'):
         def decorator(f):
@@ -193,7 +193,7 @@ class Collection(object):
                 return self.db.get(self.collection, uid, key)
         else:
             return self.db.get_docs_with_filter(self.collection, pattern)
-    
+
     @timed(op_type='get')
     def get_and_delete(self, uid="", key=None, exp=None):
         """
@@ -268,7 +268,7 @@ class Butler(object):
         self.ell = ell
         self.targets = targets
         self.memory = Memory()
-        
+
         if self.targets.db is None:
             self.targets.db = self.db
         self.queries = Collection(self.app_id+":queries", "", self.exp_uid, db)
@@ -291,6 +291,6 @@ class Butler(object):
                                task, task_args_json,
                                self.exp_uid + '_' + self.alg_label,
                                ignore_result, time_limit,
-                               alg_id=self.alg_id, alg_label=self.alg_label)  
+                               alg_id=self.alg_id, alg_label=self.alg_label)
         else:
             self.db.submit_job(self.app_id, self.exp_uid, task, task_args_json, None, ignore_result, time_limit)  
