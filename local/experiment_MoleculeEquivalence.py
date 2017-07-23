@@ -108,7 +108,7 @@ if __name__ == '__main__':
     initExp['args']['algorithm_management_settings'] = algorithm_management_settings
     initExp['args']['alg_list'] = alg_list
     initExp['args']['instructions'] = 'Do not click back or refresh the page!!!'
-    initExp['args']['debrief'] = 'Thank you for your participation. Your response has been recorded.'
+    initExp['args']['debrief'] = 'Thank you for your participation <a href="www.google.com" target="_blank">here</a>. Your response has been recorded.'
     # the number of questions the participant will see, this value will be calculated by adding pretest_count, training_count and posttest_count
     initExp['args']['num_tries'] = 1
     initExp['app_id'] = 'MoleculeEquivalence'
