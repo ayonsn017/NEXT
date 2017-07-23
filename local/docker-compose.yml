@@ -19,7 +19,7 @@ cadvisor:
 
 minionredis:
   image: redis
-  command: redis-server /next_backend/next/database_client/CacheStore/redis.conf
+  command: redis-server /next_backend/next/database/redis.conf
   volumes:
    - /Users/blakemason/Developer/personalizedEdu/NEXT:/next_backend
   expose:
