@@ -159,11 +159,14 @@ class MyAlg:
         participant_questions = []
 
         # save questions as lists to improve database i/o
+        '''
+        # Not showing the first instruction question because we do not require consent for MTurk
         # introduction instruction 1
         participant_question = \
             [instructions.get_introduction_instruction1(monetary_gain), '', 0, parameters.instruction_key, 0,
              total_questions]
         participant_questions.append(participant_question)
+        '''
 
         # introduction instruction 2
         participant_question = \

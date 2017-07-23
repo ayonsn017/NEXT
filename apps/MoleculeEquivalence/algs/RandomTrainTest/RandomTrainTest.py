@@ -159,12 +159,15 @@ class MyAlg:
         """
         participant_questions = []
 
+        '''
+        # not showing first instruction question since we don not need consent for MTurkers
         # introduction instruction 1
         # same structure as molecule question. m1 contains the instruction. m2 is empty. same is set to 0. ques_count
         # also set to zero
         participant_question = \
             [instructions.get_introduction_instruction1(monetary_gain), '', 0, parameters.instruction_key, 0, total_questions]
         participant_questions.append(participant_question)
+        '''
 
         # introduction instruction 2
         participant_question = \

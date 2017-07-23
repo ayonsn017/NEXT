@@ -11,7 +11,8 @@ guard_key = 'guard'
 ques_gen_lock_name = 'ques_gen_lock'  # the name of the lock to be used for question generation
 
 # instruction question counts
-introduction_instructions_count = 2
+# introduction_instructions_count = 2
+introduction_instructions_count = 1  # removing the first instruction since we do not need consent in MTurk
 pretest_instructions_count = 1
 training_instructions_count = 1
 posttest_instructions_count = 1
@@ -35,4 +36,3 @@ training_data_key = 'training_data'
 posttest_dist_key = 'posttest_dist'
 guard_data_key = 'guard_data'
 time_required_key = 'time_required'
-
