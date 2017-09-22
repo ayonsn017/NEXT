@@ -46,7 +46,7 @@ def to_db_fmt(x):
         return x.tolist()
 
     # types that MongoDB can natively store
-    if type(x) in {int, float, long, complex, str, unicode, datetime}:
+    if type(x) in {bool, int, float, long, complex, str, unicode, datetime}:
         return x
 
     # interface types. don't repickle these

@@ -287,10 +287,13 @@ class Butler(object):
 
     def job(self, task, task_args_json, ignore_result=True, time_limit=0):
         if self.alg_label:
-            self.db.submit_job(self.app_id, self.exp_uid,
+            res = self.db.submit_job(self.app_id, self.exp_uid,
                                task, task_args_json,
                                self.exp_uid + '_' + self.alg_label,
                                ignore_result, time_limit,
                                alg_id=self.alg_id, alg_label=self.alg_label)
         else:
-            self.db.submit_job(self.app_id, self.exp_uid, task, task_args_json, None, ignore_result, time_limit)  
+            res = self.db.submit_job(self.app_id, self.exp_uid, task, task_args_json, None, ignore_result, time_limit)
+
+        if not ignore_result:
+            return res
