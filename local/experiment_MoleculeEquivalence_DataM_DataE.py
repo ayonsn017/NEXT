@@ -40,8 +40,9 @@ if __name__ == '__main__':
     monetary_gain_key = 'monetary_gain'
 
     experiment_list = []
-    alg_ids = ['FixedTrainRandomTest', 'RandomTrainTest']
-    alg_labels = ['DataM', 'DataHCNN', 'DataHCNN0.10', 'DataNN']
+    fixed_alg_id, random_alg_id = 'FixedTrainRandomTest', 'RandomTrainTest'
+    alg_labels = ['DataM', 'DataE']
+    time_required = '30'
     #alg_labels = ['DataM']
 
     # Create common alg_list
@@ -51,25 +52,25 @@ if __name__ == '__main__':
     # parameters for FixedTrainRandomTest
     for training_dataset_fname, alg_label in zip(training_dataset_fnames, alg_labels):
         alg_item = {}
-        alg_item[alg_id_key] = alg_ids[0]
+        alg_item[alg_id_key] = fixed_alg_id
         alg_item[alg_label_key] = alg_label
         alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
         alg_item[training_data_key] = read_csv_to_dictlist(SAMPLE_DATA_DIR + training_dataset_fname)
         alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
         alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
-        alg_item[time_required_key] = '40'
+        alg_item[time_required_key] = time_required
         alg_item[monetary_gain_key] = ''
         alg_list.append(alg_item)
 
     # parameters for RandomTrainTest
     alg_item = {}
-    alg_item[alg_id_key] = alg_ids[1]
-    alg_item[alg_label_key] = alg_ids[1]
+    alg_item[alg_id_key] = random_alg_id
+    alg_item[alg_label_key] = random_alg_id
     alg_item[pretest_dist_key] = read_csv_to_dictlist(pretest_dist_fname)
     alg_item[training_data_key] = read_csv_to_dictlist(training_dist_fname)
     alg_item[posttest_dist_key] = read_csv_to_dictlist(posttest_dist_fname)
     alg_item[guard_data_key] = read_csv_to_dictlist(guard_dataset_fname)
-    alg_item[time_required_key] = '40'
+    alg_item[time_required_key] = time_required
     alg_item[monetary_gain_key] = ''
     alg_list.append(alg_item)
 
