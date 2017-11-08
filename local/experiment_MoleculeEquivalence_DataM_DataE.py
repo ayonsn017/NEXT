@@ -5,6 +5,17 @@ import csv
 sys.path.append("../")
 from launch_experiment import *
 
+def get_backend():
+    """
+    Get the backend host and port.
+
+    Defaults to dict(host='localhost', port=8000).
+    """
+    return {
+        'host': os.environ.get('NEXT_BACKEND_GLOBAL_HOST', 'localhost'),
+        'port': os.environ.get('NEXT_BACKEND_GLOBAL_PORT', '8000')
+    }
+
 
 def read_csv_to_dictlist(fname):
     """
@@ -116,7 +127,10 @@ if __name__ == '__main__':
     experiment_list.append(experiment)
 
     # Launch the experiment
-    host = "localhost:8000"
+    #host = "localhost:8000"
+    backend = get_backend()
+    host = "{}:{}".format(backend['host'], backend['port'])
+
     print "It's happening"
     exp_uid_list = launch_experiment(host, experiment_list)
     print "Made experiments {}".format(exp_uid_list)
