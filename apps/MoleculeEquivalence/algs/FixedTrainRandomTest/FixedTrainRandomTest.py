@@ -171,7 +171,7 @@ class MyAlg:
         # introduction instruction 2
         participant_question = \
             [instructions.get_introduction_instruction2(pretest_count, training_count, posttest_count, guard_gap,
-                                                        time_required), '', 0, parameters.instruction_key, 0,
+                                                        time_required), '', 0, parameters.terms_key, 0,
              total_questions]
         participant_questions.append(participant_question)
 

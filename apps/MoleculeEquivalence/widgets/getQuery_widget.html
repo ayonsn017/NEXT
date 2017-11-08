@@ -1,4 +1,9 @@
 <style>
+  /* size of radio buttons*/
+  input[type=radio] {
+    transform: scale(2);
+  }
+
   html,body{
   height:100%;
   }
@@ -34,12 +39,15 @@
     left: 50%;
   transform: translate(-100%, -100%);
 }*/
+label.feedback_label {
+  font-size: 30px
+}
 
 div.feedback_box {
     background-color: white;
     color: black;
-    margin: 20px 0 20px 0;
-    padding: 0px;
+    margin: 20px 0 10px 0;
+    padding: 10px;
     display: none;
 }
 
@@ -47,9 +55,18 @@ div.instruction_box{
     background-color: white;
     color: black;
     margin: 20px 0 20px 0;
-    padding: 20px;
+    padding: 30px;
     outline:1px solid black;
-    font-size:16;
+    font-size:20;
+}
+
+div.terms_box{
+    background-color: white;
+    color: black;
+    margin: 20px 0 20px 0;
+    padding: 30px;
+    outline:1px solid black;
+    font-size:20;
 }
 
   div.row > div.col-xs-12 {
@@ -76,14 +93,35 @@ div.instruction_box{
         &nbsp;
         &nbsp;
         <button type="button" id="proceeed_btn" class="btn btn-danger"
-                        onclick="proceed()" style="float: right;">Proceed
+                        onclick="proceed()" style="float: right; font-size: 25px;">Proceed
         </button>
         <br>
     </div>
+{% elif query.ques_type == "terms" %}
+    <div class="terms_box" id="terms_div">
+        {{ query.target_indices[0]}}
+        <br>
+        <br>
+        &nbsp;
+        &nbsp;
+        <input type="checkbox" name="agree_terms" id="agree_terms"> I acknowledge that I have read and agree to the payment eligibility criteria<br>
+        <br>
+        <div class="feedback_box" id="must_answer_div">
+            <label style="color:red;">You must agree to the payment eligibility criteria to proceed </label>
+        </div>
+        &nbsp;
+        &nbsp;
+        <button type="button" id="proceeed_btn" class="btn btn-danger"
+                      onclick="agree_and_proceed()" style="float: right; font-size: 25px;">Proceed
+        </button>
+
+
+    <br>
+</div>
 {% else %}
     <div style="text-align:right;"><span style="font-size:35px;">{{ query.ques_count }}/{{ query.total_ques_count }}</span></div>
     <div>
-        <h3>Are the following two molecules the same? </h3>
+        <h2>Are the following two molecules the same? </h2>
     </div>
 
     <br>
@@ -121,24 +159,24 @@ div.instruction_box{
     </div>
     <div>
     <br>
-        
+
         {% if query.ques_type == "training" %}
         <!-- provide feedback -->
         &nbsp;
         <form>
-            <input type="radio" name="participant_training_answer" id ="participant_training_answer_yes" value="Yes"> Yes<br>
-            <input type="radio" name="participant_training_answer" id ="participant_training_answer_no" value="No"> No<br>
+            <input type="radio" name="participant_training_answer" id ="participant_training_answer_yes" value="Yes"><label class="feedback_label">&nbsp;&nbsp;Yes</label><br><br>
+            <input type="radio" name="participant_training_answer" id ="participant_training_answer_no" value="No"><label class="feedback_label">&nbsp;&nbsp;No</label><br>
         </form>
-        <button id="feedback_submit" type="button" onclick="feedback_respond();" class="btn btn-danger" style="float: right;">Submit</button>
+        <button id="feedback_submit" type="button" onclick="feedback_respond();" class="btn btn-danger" style="float: right; font-size: 25px;">Submit</button>
 
         {% else %}
         <!-- no feedback -->
         &nbsp;
         <form>
-            <input type="radio" name="participant_answer" id ="participant_answer_yes" value="Yes"> Yes<br>
-            <input type="radio" name="participant_answer" id ="participant_answer_no" value="No"> No<br>
+            <input type="radio" name="participant_answer" id ="participant_answer_yes" value="Yes"><label class="feedback_label">&nbsp;&nbsp;Yes</label><br><br>
+            <input type="radio" name="participant_answer" id ="participant_answer_no" value="No"><label class="feedback_label">&nbsp;&nbsp;No</label><br>
         </form>
-        <button type="button" id="answer_submit_no_feedback" onclick="submit();" class="btn btn-danger" style="float: right;">Submit</button>
+        <button type="button" id="answer_submit_no_feedback" onclick="submit();" class="btn btn-danger" style="float: right; font-size: 25px;">Submit</button>
 
         {% endif %}
     </div>
@@ -146,9 +184,9 @@ div.instruction_box{
     <br>
     <!-- Feedback div -->
     <div class="feedback_box" id="feedback_div">
-        <h3 id="feedback_text">Your answer is <span style="font-weight: bold;"  id="feedback_msg1" ></span>. <span style=""  id="feedback_msg2" ></span></h3>
+        <h2 id="feedback_text">Your answer is <span style="font-weight: bold;"  id="feedback_msg1" ></span>. <span style=""  id="feedback_msg2" ></span></h2><br>
         <button type="button" class="btn btn-danger" id="answer_submit_feedback"
-                        onclick="submit_response()" style="float: right;">Proceed</button>
+                        onclick="submit_response()" style="float: right; font-size: 25px;">Proceed</button>
     </div>
     <!-- Must answer div -->
     <div class="feedback_box" id="must_answer_div">
@@ -164,12 +202,12 @@ var feedback_message;
 var correct_answer;
 var feedback_message2;
 var respond = function(label){
-    console.log('setting response variable')       
+    console.log('setting response variable')
 
     // Disable buttons during feedback
-    document.getElementById("participant_training_answer_yes").disabled = true; 
+    document.getElementById("participant_training_answer_yes").disabled = true;
     document.getElementById("participant_training_answer_no").disabled = true;
-    document.getElementById("feedback_submit").style.visibility = "hidden"; 
+    document.getElementById("feedback_submit").style.visibility = "hidden";
 
     // Display modal with feedback
     response = (label === "Yes");
@@ -181,17 +219,17 @@ var respond = function(label){
     }
     else {
         document.getElementById("feedback_msg1").innerHTML = "incorrect";
-        document.getElementById("feedback_msg1").style.color = "red";  
+        document.getElementById("feedback_msg1").style.color = "red";
     }
     $('#feedback_msg2').text(feedback_message2);
 
     // Show feedback div
-    $('#feedback_div').css('display','block'); 
+    $('#feedback_div').css('display','block');
 }
 
 var submit_response = function() {
     /* note: response variable always exists because the variable is assigned before modal
-    displays, showing this button that calls this function*/ 
+    displays, showing this button that calls this function*/
     document.getElementById("answer_submit_feedback").disabled = true;
     if (response) {
         submit_yes()
@@ -245,9 +283,20 @@ var proceed = function() {
     submit_yes();
 }
 
+var agree_and_proceed = function() {
+    if(document.getElementById("agree_terms").checked) {
+      document.getElementById("proceeed_btn").disabled = true;
+      submit_yes();
+    }
+    else {
+        // Show feedback div
+        $('#must_answer_div').css('display','block');
+    }
+}
+
 var submit_yes = function() {
     console.log('Submitting yes');
-    next_widget.processAnswer({'target_winner': true, 'participant_uid': "{{ query.participant_uid }}"});    
+    next_widget.processAnswer({'target_winner': true, 'participant_uid': "{{ query.participant_uid }}"});
 }
 
 var submit_no = function() {
@@ -266,7 +315,7 @@ var submit = function() {
     }
     else {
         // Show feedback div
-        $('#must_answer_div').css('display','block'); 
+        $('#must_answer_div').css('display','block');
     }
 }
 
@@ -281,10 +330,8 @@ var feedback_respond = function() {
     }
     else {
         // Show feedback div
-        $('#must_answer_div').css('display','block'); 
-    }  
+        $('#must_answer_div').css('display','block');
+    }
 }
 
 </script>
-
-

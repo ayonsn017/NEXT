@@ -86,7 +86,7 @@ class MyApp:
 
         ques_type = alg_response[ques_type_index]
 
-        if ques_type == parameters.instruction_key:
+        if ques_type == parameters.instruction_key or ques_type == parameters.terms_key:
             mol1 = alg_response[mol1_index]
             mol2 = alg_response[mol2_index]
         else:
