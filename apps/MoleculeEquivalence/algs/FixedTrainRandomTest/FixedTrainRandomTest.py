@@ -197,8 +197,8 @@ class MyAlg:
                                 total_questions]
         participant_questions.append(participant_question)
 
-        # training questions
-        training_question_generator = FixedInstanceReader.FixedInstanceReader(training_data)
+        # training questions, use pretest seed to generate the order of representation
+        training_question_generator = FixedInstanceReader.FixedInstanceReader(training_data, seed=pretest_seed)
         participant_questions, index = utility.gen_participant_questions(training_question_generator,
                                                                          guard_question_generator, training_count,
                                                                          parameters.training_key, index, guard_gap,

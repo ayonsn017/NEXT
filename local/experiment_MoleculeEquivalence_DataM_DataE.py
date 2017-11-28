@@ -37,7 +37,7 @@ if __name__ == '__main__':
     training_dist_fname = './data/03_TrainingPool/training_dist_LewisSF.csv'
     guard_dataset_fname = './data/04_SampleDataset/guard_questions_Lewis_SF.csv'
     posttest_dist_fname = './data/02_TestDistribution/test_dist_LewisSF.csv'
-    training_dataset_fnames = ['DataM.txt', 'DataHCNN.txt', 'DataHCNN0.10.txt', 'DataHCP.txt']
+    training_dataset_fnames = ['DataM.txt', 'DataE.txt']
     #training_dataset_fnames = ['DataM.txt']
 
     # keys

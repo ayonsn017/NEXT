@@ -7,10 +7,16 @@ class FixedInstanceReader(QuestionGenerator.QuestionGenerator):
 
     keys = ['Molecule1', 'Representation1', 'Molecule2', 'Representation2', 'Same']
 
-    def __init__(self, dictlist):
-        """:param dictlist: list(dict(string, string)), list of dictionaries containing the questions"""
+    def __init__(self, dictlist, seed=-1):
+        """
+        :param dictlist: list(dict(string, string)), list of dictionaries containing the questions
+        :param seed: int, default value -1, the random seed to use to fix the order of representation
+        """
         self.dataset = np.array([[row[key] for key in self.keys] for row in dictlist])
         self.index = 0
+
+        if seed != -1:
+            np.random.seed(seed)
 
     def generate_question(self):
         """
@@ -31,7 +37,14 @@ class FixedInstanceReader(QuestionGenerator.QuestionGenerator):
         """
         index = index % len(self.dataset)
         mol1, rep1, mol2, rep2, same = self.dataset[index]
+
+        # flip a just coin to switch the position of the molecules on screen
+        head = np.random.binomial(1, 0.5)
+        if head == 1:
+            mol1, rep1, mol2, rep2 = mol2, rep2, mol1, rep1
+
         return [rep1 + '_' + mol1, rep2 + '_' + mol2, int(same)]
+
 
 if __name__ == '__main__':
     input_fname = '../../../../local/data/04_SampleDataset/training_dataset.csv'

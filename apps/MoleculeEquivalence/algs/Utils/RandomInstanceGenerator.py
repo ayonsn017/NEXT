@@ -18,7 +18,7 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
         self.probabilities = [float(entry[self.probability_index]) for entry in self.distributions]
 
         if seed != -1:
-            np.random.seed(seed);
+            np.random.seed(seed)
 
     def generate_question(self):
         """
@@ -37,7 +37,12 @@ class RandomInstanceGenerator(QuestionGenerator.QuestionGenerator):
         else:
             mol2, rep2, mol1, rep1, same = self.distributions[index][:self.probability_index]
 
-        return [rep1 + '_' + mol1, rep2 + '_' +mol2, same]
+        # if this question is found again then generate a new question by recursion
+        temp_mol1, temp_mol2 = rep1 + '_' + mol1, rep2 + '_' + mol2
+        if temp_mol1 == 'SF_(C2H5)2O' or temp_mol2 == 'SF_(C2H5)2O':
+            return self.generate_question()
+
+        return [rep1 + '_' + mol1, rep2 + '_' + mol2, same]
 
 
 if __name__ == '__main__':
