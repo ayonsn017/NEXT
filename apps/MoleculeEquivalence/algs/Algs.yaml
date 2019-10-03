@@ -48,6 +48,12 @@ getQuery:
       5:
         type: num
         description: total number of questions to be shown to the participant
+      6:
+        type: string
+        description: The key for the highlighted first molecule in representation
+      7:
+        type: string
+        description: The key for the highlighted second molecule in representation
         
       
 processAnswer:

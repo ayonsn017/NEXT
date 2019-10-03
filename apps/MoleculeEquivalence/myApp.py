@@ -91,6 +91,7 @@ class MyApp:
         ques_type_index = 3
         ques_count_index = 4
         total_ques_count_index = 5
+        highlight_index1, highlight_index2 = 6, 7
 
         exp_uid = butler.exp_uid
         # get the participant_uid to send to the front end
@@ -100,6 +101,8 @@ class MyApp:
         alg_response = alg({'participant_uid': participant_uid})
 
         ques_type = alg_response[ques_type_index]
+
+        highlight1, highlight2 = '', ''
 
         if ques_type == parameters.instruction_key or ques_type == parameters.terms_key:
             mol1 = alg_response[mol1_index]
@@ -111,6 +114,13 @@ class MyApp:
             mol2 = self.TargetManager.get_target_item_alt_desc(
                 exp_uid, alg_response[mol2_index]
                 )
+            highlight1 = self.TargetManager.get_target_item_alt_desc(
+                exp_uid, alg_response[highlight_index1]
+            )
+            highlight2 = self.TargetManager.get_target_item_alt_desc(
+                exp_uid, alg_response[highlight_index2]
+            )
+
             mol1['label'] = 'mol1'
             mol2['label'] = 'mol2'
 
@@ -121,7 +131,8 @@ class MyApp:
 
         return {'target_indices': [mol1, mol2], 'same': same,
                 'ques_type': ques_type, 'ques_count': ques_count,
-                'total_ques_count': total_ques_count}
+                'total_ques_count': total_ques_count,
+                'highlights': [highlight1, highlight2]}
 
     def processAnswer(self, butler, alg, args):
         """
