@@ -1,3 +1,8 @@
+"""
+the main app file
+
+@author: Ayon
+"""
 import json
 import next.apps.AltDescTargetManager
 from apps.MoleculeEquivalence.algs.Utils import parameters
@@ -14,7 +19,8 @@ class MyApp:
     def __init__(self, db):
         """:param db: the database object"""
         self.app_id = 'MoleculeEquivalence'
-        self.TargetManager = next.apps.AltDescTargetManager.AltDescTargetManager(db)
+        self.TargetManager = \
+            next.apps.AltDescTargetManager.AltDescTargetManager(db)
 
     def initExp(self, butler, init_algs, args):
         """
@@ -28,32 +34,38 @@ class MyApp:
 
         if 'targetset' in args['targets'].keys():
             n = len(args['targets']['targetset'])
-            self.TargetManager.set_targetset(exp_uid, args['targets']['targetset'])
+            self.TargetManager.set_targetset(exp_uid,
+                                             args['targets']['targetset'])
         else:
             n = args['targets']['n']
         args['n'] = n
         del args['targets']
 
-        # get the pretest, training and posttest questions count along with the gap between guard questions
-        # forward them to the algorithms
+        # get the pretest, training and posttest questions count along with
+        # the gap between guard questions forward them to the algorithms
         alg_data = {}
-        algorithm_keys = ['pretest_count', 'training_count', 'posttest_count', 'guard_gap']
+        algorithm_keys = ['pretest_count', 'training_count', 'posttest_count',
+                          'guard_gap']
         for key in algorithm_keys:
             if key in args:
                 alg_data[key] = args[key]
 
         # calculate the number of questions to show
-        num_tries = args['pretest_count'] + args['training_count'] + args['posttest_count']
+        num_tries = args['pretest_count'] + args['training_count'] + \
+            args['posttest_count']
 
         # calculate
         guard_count = num_tries // args['guard_gap']
-        num_tries = num_tries + guard_count + parameters.introduction_instructions_count + \
-            parameters.pretest_instructions_count + parameters.training_instructions_count + \
+        num_tries = num_tries + guard_count + \
+            parameters.introduction_instructions_count + \
+            parameters.pretest_instructions_count + \
+            parameters.training_instructions_count + \
             parameters.posttest_instructions_count
 
         args['num_tries'] = num_tries
 
-        # get pretest, training and posttest file names and add them to the alg data
+        # get pretest, training and posttest file names and add them to the
+        # alg data
         alg_list = args[self.alg_list_key]
         alg_data[self.alg_list_key] = str(alg_list)
 
@@ -70,7 +82,8 @@ class MyApp:
         :param butler: Butler, the butler
         :param alg: function pointer for the algorithm getQuery
         :param args: dict, the arguments
-        :return dict(string, objects), inputs for the widgets as specified in the yaml file
+        :return dict(string, objects), inputs for the widgets as specified in
+        the yaml file
         """
         mol1_index = 0
         mol2_index = 1
@@ -80,9 +93,11 @@ class MyApp:
         total_ques_count_index = 5
 
         exp_uid = butler.exp_uid
-        participant_uid = args['participant_uid']  # get the participant_uid to send to the front end
+        # get the participant_uid to send to the front end
+        participant_uid = args['participant_uid']
 
-        alg_response = alg({'participant_uid': participant_uid})  # get a specific question for this participant
+        # get a specific question for this participant
+        alg_response = alg({'participant_uid': participant_uid})
 
         ques_type = alg_response[ques_type_index]
 
@@ -90,8 +105,12 @@ class MyApp:
             mol1 = alg_response[mol1_index]
             mol2 = alg_response[mol2_index]
         else:
-            mol1 = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol1_index])
-            mol2 = self.TargetManager.get_target_item_alt_desc(exp_uid, alg_response[mol2_index])
+            mol1 = self.TargetManager.get_target_item_alt_desc(
+                exp_uid, alg_response[mol1_index]
+                )
+            mol2 = self.TargetManager.get_target_item_alt_desc(
+                exp_uid, alg_response[mol2_index]
+                )
             mol1['label'] = 'mol1'
             mol2['label'] = 'mol2'
 
@@ -100,7 +119,8 @@ class MyApp:
         ques_count = alg_response[ques_count_index]
         total_ques_count = alg_response[total_ques_count_index]
 
-        return {'target_indices': [mol1, mol2], 'same': same, 'ques_type': ques_type, 'ques_count': ques_count,
+        return {'target_indices': [mol1, mol2], 'same': same,
+                'ques_type': ques_type, 'ques_count': ques_count,
                 'total_ques_count': total_ques_count}
 
     def processAnswer(self, butler, alg, args):
@@ -109,18 +129,22 @@ class MyApp:
         :param butler: Butler, the butler
         :param alg: funciton pointer for the algorithm process answer
         :param args: dict, the arguments
-        :return dict(key, object): the target chosen by the participant and the participant uid
+        :return dict(key, object): the target chosen by the participant and
+        the participant uid
         """
         query = butler.queries.get(uid=args['query_uid'])
 
         target_winner = args['target_winner']
         participant_uid = args['participant_uid']
-        butler.experiment.increment(key='num_reported_answers_for_' + query['alg_label'])
+        butler.experiment.increment(key='num_reported_answers_for_' +
+                                    query['alg_label'])
 
         # this is a call to the algorithm processAnswer method
-        alg({'target_winner': target_winner, 'participant_uid': participant_uid})
+        alg({'target_winner': target_winner,
+             'participant_uid': participant_uid})
 
-        return {'target_winner': target_winner, 'participant_uid': participant_uid}
+        return {'target_winner': target_winner,
+                'participant_uid': participant_uid}
 
     def getModel(self, butler, alg, args):
         """
@@ -142,6 +166,7 @@ class MyApp:
         :return the algorithm to assign to this participant
         """
         # choose the algorithms in a round robin fashion
-        participant_count = butler.other.increment(key=self.participant_count_key)
+        participant_count = \
+            butler.other.increment(key=self.participant_count_key)
         alg_index = participant_count % len(alg_list)
         return alg_list[alg_index]
