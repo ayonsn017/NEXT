@@ -25,20 +25,25 @@ def gen_participant_questions(question_generator,
         list[string, string, int, string, int, int], the list of participant
         questions
     """
+    m1_index, m2_index, sindex, h1_index, h2_index = 0, 1, 2, 3, 4
     for i in range(ques_count):
         # adding the question type
         question = question_generator.generate_question()
-        participant_question = [question[0], question[1], question[2],
-                                ques_type, index, total_questions]
+        participant_question = [question[m1_index], question[m2_index],
+                                question[sindex], ques_type, index,
+                                total_questions, question[h1_index],
+                                question[h2_index]]
         index += 1
         participant_questions.append(participant_question)
 
         # check if we should add guard questions
         if index % (guard_gap + 1) == 0:
             guard_question = guard_question_generator.generate_question()
-            participant_question = [guard_question[0], guard_question[1],
-                                    guard_question[2], parameters.guard_key,
-                                    index, total_questions]
+            participant_question = [guard_question[m1_index],
+                                    guard_question[m2_index],
+                                    guard_question[sindex],
+                                    parameters.guard_key, index,
+                                    total_questions, 'Lewis_H2', 'Lewis_O2']
             index += 1
             participant_questions.append(participant_question)
 
