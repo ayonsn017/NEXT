@@ -49,6 +49,12 @@ initExp:
                         Probability:
                             type: str
                             optional: true
+                        Highlight1:
+                            type: str
+                            optional: true
+                        Highlight2:
+                            type: str
+                            optional: true
               posttest_dist:
                 description: the pretest distribution as a list of dictionaries
                 type: list
