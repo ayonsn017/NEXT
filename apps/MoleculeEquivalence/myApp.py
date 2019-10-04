@@ -114,12 +114,21 @@ class MyApp:
             mol2 = self.TargetManager.get_target_item_alt_desc(
                 exp_uid, alg_response[mol2_index]
                 )
-            highlight1 = self.TargetManager.get_target_item_alt_desc(
-                exp_uid, alg_response[highlight_index1]
-            )
-            highlight2 = self.TargetManager.get_target_item_alt_desc(
-                exp_uid, alg_response[highlight_index2]
-            )
+
+            # The highlights
+            if alg_response[highlight_index1] != '':
+                highlight1 = self.TargetManager.get_target_item_alt_desc(
+                    exp_uid, alg_response[highlight_index1]
+                )
+            else:
+                highlight1 = mol1
+
+            if alg_response[highlight_index2] != '':
+                highlight2 = self.TargetManager.get_target_item_alt_desc(
+                    exp_uid, alg_response[highlight_index2]
+                )
+            else:
+                highlight2 = mol2
 
             mol1['label'] = 'mol1'
             mol2['label'] = 'mol2'
