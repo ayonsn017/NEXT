@@ -3,7 +3,6 @@ the main app file
 
 @author: Ayon
 """
-import json
 import next.apps.AltDescTargetManager
 from apps.MoleculeEquivalence.algs.Utils import parameters
 

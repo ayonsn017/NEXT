@@ -3,7 +3,6 @@ script for the random train random test condition
 
 @author: Ayon
 """
-import next.utils as utils
 from apps.MoleculeEquivalence.algs.Utils import RandomInstanceGenerator, \
     FixedInstanceReader, parameters, instructions, utility
 import ast
