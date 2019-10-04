@@ -130,7 +130,9 @@ class MyAlg:
 
             # increment and get the seeds for this participant
             seed_dict = \
-                butler.algorithms.increment_many(key_value_dict=self.increment_dictionary)
+                butler.algorithms.increment_many(
+                    key_value_dict=self.increment_dictionary
+                    )
             pretest_seed = seed_dict[parameters.pretest_seed_key]
             posttest_seed = seed_dict[parameters.posttest_seed_key]
 
@@ -239,13 +241,15 @@ class MyAlg:
             [instructions.get_introduction_instruction2(
                 pretest_count, training_count, posttest_count, guard_gap,
                 time_required
-                ), '', 0, parameters.terms_key, 0, total_questions]
+                ), '', 0, parameters.terms_key, 0, total_questions,
+                '', '']
         participant_questions.append(participant_question)
 
         # pretest instruction
         participant_question = [
             instructions.get_pretest_instruction(), '', 0,
-            parameters.instruction_key, 0, total_questions
+            parameters.instruction_key, 0, total_questions,
+            '', ''
             ]
         participant_questions.append(participant_question)
 
@@ -267,7 +271,8 @@ class MyAlg:
 
         # training instruction
         participant_question = [instructions.get_training_instruction(), '', 0,
-                                parameters.instruction_key, 0, total_questions]
+                                parameters.instruction_key, 0, total_questions,
+                                '', '']
         participant_questions.append(participant_question)
 
         # training questions, use pretest seed to generate the order of
@@ -284,7 +289,8 @@ class MyAlg:
 
         # posttest instruction
         participant_question = [instructions.get_posttest_instruction(), '', 0,
-                                parameters.instruction_key, 0, total_questions]
+                                parameters.instruction_key, 0, total_questions,
+                                '', '']
         participant_questions.append(participant_question)
 
         # posttest questions
