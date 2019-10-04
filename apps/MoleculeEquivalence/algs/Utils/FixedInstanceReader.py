@@ -1,3 +1,9 @@
+"""
+script for fixed training set possibly with highlighting
+
+@author: Ayon
+"""
+from __future__ import division, print_function
 import numpy as np
 from apps.MoleculeEquivalence.algs.Utils import QuestionGenerator
 
@@ -65,24 +71,27 @@ class FixedInstanceReader(QuestionGenerator.QuestionGenerator):
 
         if not self.highlight:
             mol1, rep1, mol2, rep2, same = self.dataset[index]
-            hlight1, hlight2 = mol1, mol2
+            rep_hlight1, rep_hlight2 = '', ''
 
         else:
             mol1, rep1, mol2, rep2, same, hlight1, hlight2 = \
                 self.dataset[index]
+            rep_hlight1 = rep1 + '_' + hlight1
+            rep_hlight2 = rep2 + '_' + hlight2
 
         # toss a coin to determine the order of molecules
         head = np.random.binomial(1, 0.5)
         if head == 1:
-            mol1, rep1, mol2, rep2, hlight1, hlight2 = \
-                mol2, rep2, mol1, rep1, hlight2, hlight1
+            mol1, rep1, mol2, rep2, rep_hlight1, rep_hlight2 = \
+                mol2, rep2, mol1, rep1, rep_hlight2, rep_hlight1
 
         return [rep1 + '_' + mol1, rep2 + '_' + mol2, int(same),
-                rep1 + '_' + hlight1, rep2 + '_' + hlight2]
+                rep_hlight1, rep_hlight2]
 
 
 if __name__ == '__main__':
-    input_fname = '../../../../local/data/04_SampleDataset/training_dataset.csv'
+    input_fname = \
+        '../../../../local/data/04_SampleDataset/training_dataset.csv'
     generator = FixedInstanceReader(input_fname)
 
-    print 'Hello World'
+    print('Hello World')
