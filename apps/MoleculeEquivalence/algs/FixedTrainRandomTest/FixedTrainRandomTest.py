@@ -93,6 +93,10 @@ class MyAlg:
             str, the question type
             int, question number
             int, total questions
+            str, representation1 || '_' || highlight1 or '', the highlight for
+                the first molecule
+            str, representation1 || '_' || highlight2 or '', the highlight for
+                the second molecule
         """
         # check how many question a participant has seen
         # will decide if the next question would be pretest, training or
@@ -129,10 +133,9 @@ class MyAlg:
                 butler.algorithms.get(key=parameters.monetary_gain_key)
 
             # increment and get the seeds for this participant
-            seed_dict = \
-                butler.algorithms.increment_many(
-                    key_value_dict=self.increment_dictionary
-                    )
+            seed_dict = butler.algorithms.increment_many(
+                key_value_dict=self.increment_dictionary
+                )
             pretest_seed = seed_dict[parameters.pretest_seed_key]
             posttest_seed = seed_dict[parameters.posttest_seed_key]
 
@@ -141,14 +144,12 @@ class MyAlg:
                 butler.algorithms.get(key=parameters.total_questions_key)
 
             # generate the questions for this participant and store them
-            participant_questions = \
-                self.generate_all_questions(pretest_dist, training_data,
-                                            posttest_dist, guard_data,
-                                            pretest_seed, posttest_seed,
-                                            pretest_count, training_count,
-                                            posttest_count, guard_gap,
-                                            time_required, monetary_gain,
-                                            total_questions)
+            participant_questions = self.generate_all_questions(
+                pretest_dist, training_data, posttest_dist, guard_data,
+                pretest_seed, posttest_seed, pretest_count, training_count,
+                posttest_count, guard_gap, time_required, monetary_gain,
+                total_questions
+                )
 
             butler.algorithms.set(key=participant_questions_key,
                                   value=participant_questions)
@@ -241,15 +242,13 @@ class MyAlg:
             [instructions.get_introduction_instruction2(
                 pretest_count, training_count, posttest_count, guard_gap,
                 time_required
-                ), '', 0, parameters.terms_key, 0, total_questions,
-                '', '']
+                ), '', 0, parameters.terms_key, 0, total_questions, '', '']
         participant_questions.append(participant_question)
 
         # pretest instruction
         participant_question = [
             instructions.get_pretest_instruction(), '', 0,
-            parameters.instruction_key, 0, total_questions,
-            '', ''
+            parameters.instruction_key, 0, total_questions, '', ''
             ]
         participant_questions.append(participant_question)
 
@@ -262,12 +261,11 @@ class MyAlg:
         pretest_question_generator = \
             RandomInstanceGenerator.RandomInstanceGenerator(pretest_dist,
                                                             seed=pretest_seed)
-        participant_questions, index = \
-            utility.gen_participant_questions(
-                pretest_question_generator, guard_question_generator,
-                pretest_count, parameters.pretest_key, index,
-                guard_gap, participant_questions, total_questions
-                )
+        participant_questions, index = utility.gen_participant_questions(
+            pretest_question_generator, guard_question_generator,
+            pretest_count, parameters.pretest_key, index, guard_gap,
+            participant_questions, total_questions
+            )
 
         # training instruction
         participant_question = [instructions.get_training_instruction(), '', 0,
@@ -280,12 +278,11 @@ class MyAlg:
         training_question_generator = \
             FixedInstanceReader.FixedInstanceReader(training_data,
                                                     seed=pretest_seed)
-        participant_questions, index = \
-            utility.gen_participant_questions(
-                training_question_generator, guard_question_generator,
-                training_count, parameters.training_key, index, guard_gap,
-                participant_questions, total_questions
-                )
+        participant_questions, index = utility.gen_participant_questions(
+            training_question_generator, guard_question_generator,
+            training_count, parameters.training_key, index, guard_gap,
+            participant_questions, total_questions
+            )
 
         # posttest instruction
         participant_question = [instructions.get_posttest_instruction(), '', 0,
@@ -297,11 +294,10 @@ class MyAlg:
         posttest_question_generator = \
             RandomInstanceGenerator.RandomInstanceGenerator(posttest_dist,
                                                             seed=posttest_seed)
-        participant_questions, index = \
-            utility.gen_participant_questions(
-                posttest_question_generator, guard_question_generator,
-                posttest_count, parameters.posttest_key, index, guard_gap,
-                participant_questions, total_questions
-                )
+        participant_questions, index = utility.gen_participant_questions(
+            posttest_question_generator, guard_question_generator,
+            posttest_count, parameters.posttest_key, index, guard_gap,
+            participant_questions, total_questions
+            )
 
         return participant_questions
