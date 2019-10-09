@@ -19,13 +19,14 @@ class MyAlg:
                             parameters.posttest_seed_key: 1}
 
     def initExp(self, butler, pretest_count, training_count, posttest_count,
-                guard_gap, alg_list):
+                guard_gap, seed, alg_list):
         """
         :param butler: Butler, the butler
         :param pretest_count: int, the number of pretest questions to show
         :param training_count: int, the number of training questions to show
         :param posttest_count: int, the number of posttest questions to show
         :param guard_gap: int, the gap between guard questions
+        :param seed: int, the starting seed for sampling problems
         :param alg_list: list[dict], a list containing parameters that vary
         across algorithms for this algorithm we need pretest distribution,
         training distribution, posttest distribution and guard data
@@ -73,11 +74,11 @@ class MyAlg:
 
         # save the initial seeds
         butler.algorithms.set(key=parameters.pretest_seed_key,
-                              value=parameters.pretest_seed)
+                              value=parameters.pretest_seed + seed)
         butler.algorithms.set(key=parameters.training_seed_key,
-                              value=parameters.training_seed)
+                              value=parameters.training_seed + seed)
         butler.algorithms.set(key=parameters.posttest_seed_key,
-                              value=parameters.posttest_seed)
+                              value=parameters.posttest_seed + seed)
 
         return True
 

@@ -12,6 +12,9 @@ initExp:
     guard_gap:
       description: Gap between guard questions
       type: num
+    seed:
+      description: The starting seed increment for sampling problems
+      type: num
     alg_list:
       description: A tuple of dictionaries in string format containing information regarding all the algorithms
       type: str
@@ -38,7 +41,7 @@ getQuery:
         description: The key for the second molecule in representation
       2:
         type: num
-        description: 1 or 0, identifies if the two molecules are the same or not 
+        description: 1 or 0, identifies if the two molecules are the same or not
       3:
         type: string
         description: pretest, training or posttest identifying which type of question it is
@@ -54,8 +57,8 @@ getQuery:
       7:
         type: string
         description: The key for the highlighted second molecule in representation
-        
-      
+
+
 processAnswer:
     args:
       participant_uid:

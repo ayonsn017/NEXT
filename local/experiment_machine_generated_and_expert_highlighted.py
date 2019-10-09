@@ -58,6 +58,7 @@ if __name__ == '__main__':
     alg_label_key = 'alg_label'
     time_required_key = 'time_required'
     monetary_gain_key = 'monetary_gain'
+    seed_key = 'seed'
 
     experiment_list = []
     fixed_alg_id = 'FixedTrainRandomTest'
@@ -102,12 +103,13 @@ if __name__ == '__main__':
     initExp['args']['training_count'] = 60
     initExp['args']['posttest_count'] = 40
     initExp['args']['guard_gap'] = 19
+    initExp['args']['seed'] = 1000
     initExp['args']['participant_to_algorithm_management'] = 'one_to_one'  # assign one participant to one condition only
     initExp['args']['algorithm_management_settings'] = \
         algorithm_management_settings
     initExp['args']['alg_list'] = alg_list
     initExp['args']['instructions'] = '<h3>Do not click back or refresh the page!!!</h3>'
-    initExp['args']['debrief'] = 'Go to the following link\n ' + \
+    initExp['args']['debrief'] = 'Go to the following \n ' + \
         '<a href="https://uwmadison.co1.qualtrics.com/jfe/form/SV_0BztEXJExjnvWCx" target="_blank">link</a>.\n ' + \
         '<br>Copy the User ID found below and enter the ID in the new survey to answer four ' + \
         'more questions. <b>Note that this is not the User ID you should enter in Mechanical Turk. That ID will be generated after you have ' + \

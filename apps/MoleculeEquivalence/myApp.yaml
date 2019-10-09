@@ -73,8 +73,8 @@ initExp:
                             type: str
                         Probability:
                             type: str
-              guard_data: 
-                description: String containing a list of guard questions  
+              guard_data:
+                description: String containing a list of guard questions
                 type: list
                 values:
                     type: dict
@@ -110,6 +110,9 @@ initExp:
         guard_gap:
           description: Gap between guard questions
           type: num
+        seed:
+          description: The starting seed increment for sampling problems
+          type: num
 
 processAnswer:
   args:
@@ -122,5 +125,5 @@ processAnswer:
         participant_uid:
           description: Participant unique ID
           type: str
-          
+
 

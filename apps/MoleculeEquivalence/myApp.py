@@ -44,7 +44,7 @@ class MyApp:
         # the gap between guard questions forward them to the algorithms
         alg_data = {}
         algorithm_keys = ['pretest_count', 'training_count', 'posttest_count',
-                          'guard_gap']
+                          'guard_gap', 'seed']
         for key in algorithm_keys:
             if key in args:
                 alg_data[key] = args[key]
